@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SARITRACKER</title>
+    <title>SARI-TRACKER</title>
+    <script src="https://kit.fontawesome.com/56c8bde467.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
@@ -11,7 +12,7 @@
 </head>
     <div class="layout">
         <aside class="sidebar">
-            <h2>SARITRACKER</h2>
+            <h2>SARI-TRACKER</h2>
 
             <ul>
                 <li><a href="#">Dashboard</a></li>
@@ -24,6 +25,53 @@
         <main class="main-content">
             <h1>Dashboard</h1>
             <p>Welcome to SariTracker!</p>
+
+            <section class="dashboard-grid">
+                <div class="card-container">
+                    <div class="card">
+                        <i class="fa-solid fa-wallet" style="color: rgb(99, 230, 190);"></i>
+                        <h3>Today's Sales</h3>
+                        <p>₱0.00</p>
+                        <div class="add-btn">
+                            <button>+ Add Sale</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card">
+                        <i class="fa-solid fa-box" style="color: rgb(229, 236, 233);"></i>
+                        <h3>Total Products</h3>
+                        <p>0 Products</p>
+                        <div class="add-btn">
+                            <button>+ Add a product</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card">
+                        <i class="fa-solid fa-arrow-trend-down" style="color: rgb(229, 236, 233);"></i>
+                        <h3>Low Stocks</h3>
+                        <p>0 Products</p>
+                        <div class="add-btn">
+                            <button>+ Restock</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <div class="card">
+                        <i class="fa-solid fa-table-list" style="color: rgb(229, 236, 233);"></i>
+                        <h3>Unpaid Balance</h3>
+                        <p>₱0.00</p>
+                        <div class="add-btn">
+                            <button>+ View Customer Balance</button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
         </main>
     </div>
     <script src="index.js"></script>
