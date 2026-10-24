@@ -182,6 +182,173 @@ section.recent-sales {
     font-weight: 600;
 }
 
+#saleModal{
+    position: fixed;
+    inset: 0;
+    width: min(90%, 400px);
+    max-height: 85vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    padding: 1rem;
+    border: 1px solid var(--color-primary);
+    border-radius: 8px;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+}
+
+#saleModal[open] {
+    margin: auto;
+}
+
+#saleModal::backdrop {
+    background-color: rgba(17, 24, 19, 0.5);
+}
+
+#saleModal form{
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.modal-title h2{
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    line-height: 1.5;
+}
+
+.modal-title p{
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--color-text);
+}
+
+#closeModal{
+    align-self: flex-end;
+    order: -1;
+    margin-bottom: -1rem;
+    border: none;
+    background: trasparent;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.new-sale-input{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.new-sale-input label{
+    font-family: var(--font-body);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.new-sale-input input{
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.new-sale-input input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+}
+
+
+#productSubtotal {
+    background-color: var(--color-accent);
+    font-weight: 600;
+}
+
+.add-sale-cta {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.add-sale-cta button{
+    padding: 0.7rem 1rem;
+    border-radius: 5px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel {
+    background-color: #FFFFFF;
+    color: var(--color-text);
+    border: 1px solid #C9D2CA;
+}
+
+#addSale {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+}
+
+#cancel:hover {
+    background-color: var(--color-accent);
+}
+
+#addSale:hover {
+    filter: brightness(1.15);
+}
+
+.recent-sales td{
+    padding: 1rem 0.75rem;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.recent-sales tbody tr{
+     transition: background-color 0.2s ease;
+}
+
+.recent-sales tbody tr:hover{
+    background-color: var(--color-accent);
+}
+
+.recent-sales tbody tr:last-child td{
+    border-bottom: none;
+}
+
+.recent-sales tfoot{
+    background-color: var(--color-accent);
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.recent-sales tfoot th{
+    padding: 1rem 0.75rem;
+    color: var(--color-primary);
+    border-top: 2px solid var(--color-primary);
+}
+
+.recent-sales tfoot #salesTotal {
+    color: var(--color-primary);
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+}
+
 /* ========================== MEDIA QUERIES ============================== */
 @media (max-width: 1100px) {
     .dashboard-grid {

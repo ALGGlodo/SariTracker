@@ -31,9 +31,9 @@
                     <div class="card">
                         <i class="fa-solid fa-wallet" style="color: rgb(99, 230, 190);"></i>
                         <h3>Today's Sales</h3>
-                        <p>₱0.00</p>
+                        <p id="todaySalesTotal">₱0.00</p>
                         <div class="add-btn">
-                            <button>+ Add Sale</button>
+                             <button type="button" class="open-sale-modal">+ Add Sale</button>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                         <p>Review and record store transactions</p>
                     </div>
                     <div class="add-sale-cta">
-                        <button>+ Add Sale</button>
+                        <button type="button" class="open-sale-modal">+ Add Sale</button>
                     </div>
                 </div>
 
@@ -93,40 +93,49 @@
                             <th>Subtotal</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    
+                    <tbody id="salesTableBody">
                         
                     </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" style="text-align: right;">TOTAL:</th>
+                            <th id="salesTotal">₱0.00</th>
+                        </tr>
+                    </tfoot>
                 </table>
 
-                <dialog id="Modal">
-                    <div class="modal-title">
-                        <h2>Add Sale</h2>
-                        <p>Enter the details of the product sold.</p>
-                        <div class="close-modal-cta">
-                            <button id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+                <dialog id="saleModal">
+                    <form id="saleForm">
+                        <div class="modal-title">
+                            <h2>Add Sale</h2>
+                            <p>Enter the details of the product sold.</p>
                         </div>
-                    </div>
+                        <button id="closeModal" type="button">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
 
-                    <div class="new-sale-input">
-                        <label for="productName">Product Name</label>
-                        <input type="text" id="productName" name="productName" placeholder="Enter product name">
-                        
-                        <label for="productPrice">Price</label>
-                        <input type="number" id="productPrice" name="productPrice" placeholder="Enter price">
+                        <div class="new-sale-input">
+                            <label for="productName">Product Name</label>
+                            <input type="text" id="productName" name="productName" placeholder="Enter product name" required>
+                            
+                            <label for="productPrice">Price</label>
+                            <input type="number" id="productPrice" name="productPrice" placeholder="Enter price" min="0.01" step="0.01"  required>
 
-                        <label for="productQuantity">Quantity</label>
-                        <input type="number" id="productQuantity" name="productQuantity" placeholder="Enter quantity">
+                            <label for="productQuantity">Quantity</label>
+                            <input type="number" id="productQuantity" name="productQuantity" placeholder="Enter quantity" min="1" step="1" required>
 
-                        <label for="productSubtotal">Subtotal ₱</label>
-                        <input type="number" id="productSubtotal" name="productSubtotal" placeholder="Subtotal" readonly>
-                        
-                        <div class="add-sale-cta">
-                            <button id="cancel">Cancel</button>
-                            <button id="addSale">Add Sale</button>
+                            <label for="productSubtotal">Subtotal ₱</label>
+                            <input type="number" id="productSubtotal" name="productSubtotal" placeholder="0.00" readonly>
+
+                            <div class="add-sale-cta">
+                                <button id="cancel" type="button">Cancel</button>
+                                <button id="addSale" type="submit">Add Sale</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </dialog>
-
             </section>
         </main>
     </div>
