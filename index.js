@@ -109,3 +109,173 @@ cancelButton.addEventListener("click", () => {
 
 /* DISPLAY SAVED SALES WHEN PAGE LOADS */
 displaySales();
+
+/* FOR PRODUCT MANAGEMENT STOCK MODAL */
+const productModal = document.getElementById("productModal");
+const openProductModalButton = document.getElementById("openProductModal");
+const closeProductModalButton = document.getElementById("closeProductModal");
+const cancelProductModal = document.getElementById("cancelProductModal");
+
+openProductModalButton.addEventListener("click", () => {
+    productModal.showModal();
+});
+
+closeProductModalButton.addEventListener("click", () => {
+    productModal.close();
+});
+
+cancelProductModal.addEventListener("click", () => {
+    productModal.close();
+});
+
+const productForm = document.getElementById("productForm");
+const productsTableBody = document.getElementById("productsTableBody");
+//const totalProductsCount = document.getElementById("totalProductsCount");
+const lowStockCount = document.getElementById("lowStockCount");
+
+const newProductName = document.getElementById("newProductName");
+const newProductPrice = document.getElementById("newProductPrice");
+const newProductStock = document.getElementById("newProductStock");
+
+let products = JSON.parse(localStorage.getItem("stockMateProducts")) || [];
+let editingProductId = null;
+
+function displayProducts() {
+    productsTableBody.innerHTML = "";
+
+    products.forEach((product) => {
+        const row = productsTableBody.insertRow();
+
+        row.insertCell().textContent = product.name;
+        row.insertCell().textContent = `₱${product.price.toFixed(2)}`;
+        row.insertCell().textContent = product.stock;
+
+        const statusCell = row.insertCell();
+        const status = document.createElement("span");
+
+        if(product.stock === 0){
+            status.textContent = "Out of Stock";
+            status.className = "stock-status out-of-stock";
+        }else if(product.stock <= 5){
+            status.textContent = "Low Stock";
+            status.className = "stock-status low-stock";
+        }else{
+            status.textContent = "In Stock";
+            status.className = "stock-status in-stock";
+        }
+        statusCell.appendChild(status);
+
+        const actionsCell = row.insertCell();
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.textContent = "Edit";
+        editButton.className = "edit-product";
+        editButton.dataset.id = product.id;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "delete-product";
+        deleteButton.dataset.id = product.id;
+
+        actionsCell.append(editButton, deleteButton);
+    });
+
+    //totalProductsCount.textContent = products.length;
+    
+    const lowStockProducts = products.filter((product) => {
+    return product.stock >= 1 && product.stock <= 5;
+    });
+
+    lowStockCount.textContent = lowStockProducts.length;
+}
+
+openProductModalButton.addEventListener("click", () => {
+    editingProductId = null;
+    productForm.reset();
+
+    document.getElementById("productModalTitle").textContent = "Add Product";
+    document.getElementById("saveProductButton").textContent = "Save Product";
+
+    productModal.showModal();
+});
+
+productForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const productName = newProductName.value.trim();
+    const productPrice = Number(newProductPrice.value);
+    const productStock = Number(newProductStock.value);
+
+    if(!productName || !Number.isFinite(productPrice) || productPrice <= 0 || !Number.isInteger(productStock) || productStock < 0){
+        return;
+    }
+
+    if(editingProductId !== null){
+        const product = products.find((item) => {
+            return item.id === editingProductId;
+        });
+        if(product){
+            product.name = productName;
+            product.price = productPrice;
+            product.stock = productStock;
+        }
+    }else{
+            const product = {
+                id: Date.now(),
+                name: productName,
+                price: productPrice,
+                stock: productStock
+            };
+            products.unshift(product);
+        }
+        localStorage.setItem("stockMateProducts", JSON.stringify(products));
+        displayProducts();
+        productForm.reset();
+        editingProductId = null;    
+        productModal.close();
+    });
+
+productsTableBody.addEventListener("click", (e) => {
+    const button = e.target.closest("button");
+
+    if (!button) return;
+
+    const productId = Number(button.dataset.id);
+
+    if (button.classList.contains("edit-product")) {
+        const product = products.find((item) => item.id === productId);
+
+        if (!product) return;
+
+        editingProductId = product.id;
+
+        newProductName.value = product.name;
+        newProductPrice.value = product.price;
+        newProductStock.value = product.stock;
+
+        document.getElementById("productModalTitle").textContent = "Update Product";
+        document.getElementById("saveProductButton").textContent = "Save Changes";
+
+        productModal.showModal();
+    }
+
+    if (button.classList.contains("delete-product")) {
+        const confirmed = confirm("Are you sure you want to delete this product?");
+
+        if (!confirmed) return;
+        
+        products = products.filter((product) => {
+            return product.id !== productId;
+        });
+
+        localStorage.setItem("stockMateProducts", JSON.stringify(products));
+
+        displayProducts();
+    }
+});
+
+/* LOAD SAVED PRODUCTS WHEN THE PAGE OPENS */
+
+displayProducts();

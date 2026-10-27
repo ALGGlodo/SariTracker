@@ -145,7 +145,7 @@
                         <p>Manage your product inventory</p>
                     </div>
                     <div class="add-sale-cta">
-                        <button type="button">
+                        <button type="button" id="openProductModal" aria-label="Add product">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -154,12 +154,12 @@
                 <div class="product-grid">
                     <div class="total-products">
                         <p>Total Products</p>
-                        <h3>0</h3>
+                        <h3 id="totalProductCount">0</h3>
                         <p>Registered Items</p>
                     </div>
                     <div class="low-stock">
                         <p>Low Stock</p>
-                        <h3>0</h3>
+                        <h3 id="lowStockCount">0</h3>
                         <p>Items Below Threshold</p>
                     </div>
                 </div>
@@ -194,12 +194,45 @@
                                 <th>PRODUCT</th>
                                 <th>PRICE</th>
                                 <th>STOCK</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="productsTableBody">
                             
                         </tbody>
                     </table>
+                
+                <dialog id="productModal">
+                    <form id="productForm">
+                        <div class="modal-header">
+                            <div class="modal-title">
+                                <h2 id="productModalTitle">Add Product</h2>
+                                <p>Enter the details of the product.</p>
+                            </div>
+
+                            <button type="button" id="closeProductModal" aria-label="Close modal">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="new-product-input">
+                            <label for="newProductName">Product Name</label>
+                            <input type="text" id="newProductName" name="newProductName" placeholder="Enter product name" required>
+
+                            <label for="newProductPrice">Price (₱)</label>
+                            <input type="number" id="newProductPrice" name="newProductPrice" placeholder="Enter price" required>
+
+                            <label for="newProductStock">Stock</label>
+                            <input type="number" id="newProductStock" name="newProductStock" placeholder="Enter stock quantity" required>
+
+                            <div class="add-sale-cta">
+                                <button type="button" id="cancelProductModal">Cancel</button>
+                                <button type="submit"  id="saveProductButton">Save Product</button>
+                            </div>
+                        </div>
+                    </form>
+                </dialog>
+                
             </section>
 
         </main>

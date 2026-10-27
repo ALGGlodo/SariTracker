@@ -186,7 +186,8 @@ section.recent-sales {
     font-weight: 600;
 }
 
-#saleModal{
+#saleModal,
+#productModal{
     position: fixed;
     inset: 0;
     width: min(90%, 400px);
@@ -203,15 +204,18 @@ section.recent-sales {
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
 }
 
-#saleModal[open] {
+#saleModal[open],
+#productModal[open]{
     margin: auto;
 }
 
-#saleModal::backdrop {
+#saleModal::backdrop,
+#productModal::backdrop {
     background-color: rgba(17, 24, 19, 0.5);
 }
 
-#saleModal form{
+#saleModal form,
+#productModal form{
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -491,6 +495,138 @@ section.recent-sales {
 
 .products-table tbody tr:hover{
     background-color: var(--color-accent);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.modal-title {
+    flex: 1;
+}
+
+.modal-title h2 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+}
+
+.modal-title p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+#closeModal,
+#closeProductModal {
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.new-sale-input,
+.new-product-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.new-sale-input label,
+.new-product-input label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.new-sale-input input,
+.new-product-input input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    border: 1px solid #DDE3DD;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    background-color: #FFFFFF;
+}
+
+.add-sale-cta{
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+#cancelProductModal {
+    background-color: #FFFFFF;
+    color: var(--color-text);
+    border: 1px solid #C9D2CA;
+}
+
+.add-sale-cta button:last-child{
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+}
+
+.stock-status{
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.stock-status.in-stock {
+    background-color: #DDEBE0;
+    color: #163D2A;
+}
+
+.stock-status.low-stock {
+    background-color: #FFF4E5;
+    color: #B45309;
+}
+
+.stock-status.out-of-stock {
+    background-color: #FCE4E4;
+    color: #A52828;
+}
+
+.products-table .edit-product,
+.products-table .delete-product {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid 0.65rem;
+    border-radius: 5px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.products-table .edit-product {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+    margin-right: 0.4rem;
+}
+
+.products-table .edit-product:hover {
+    background-color: #C6DCCB;
+}
+
+.products-table .delete-product {
+    background-color: #FCE4E4;
+    color: #A52828;
+}
+
+.products-table .delete-product:hover {
+    background-color: #F5CCCC;
 }
 
 /* ========================== MEDIA QUERIES ============================== */
