@@ -14,9 +14,30 @@
     --font-body: "Inter", sans-serif;
 }
 
+/*=============================================DEFAULT STYLES===========================================*/
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.section-header button{
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
 }
+
+/*===========================================================================================*/
 
 .layout{
     display: flex;
@@ -141,23 +162,6 @@ section.recent-sales {
     padding: 1.5rem;
     border-radius: 8px;
     margin-top: 2rem;
-}
-
-.recent-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
-.recent-header button{
-    background-color: var(--color-primary);
-    color: var(--color-background);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: var(--font-body);
 }
 
 .recent-sales table {
@@ -310,7 +314,7 @@ section.recent-sales {
 
 .recent-sales td{
     padding: 1rem 0.75rem;
-    text-align: center;
+    text-align: left;
     font-family: var(--font-body);
     font-size: 0.95rem;
     color: var(--color-text);
@@ -344,9 +348,149 @@ section.recent-sales {
 .recent-sales tfoot #salesTotal {
     color: var(--color-primary);
     font-size: 1.05rem;
-    font-weight: 800;
+    font-weight: 700;
     text-align: center;
     white-space: nowrap;
+}
+
+/* ========================== PRODCUT MANAGEMENT  ============================== */
+.product-inventory {
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.product-grid{
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@scope(.total-products) {
+   p{
+    color: var(--color-text);
+    font-weight: 500;
+   } 
+
+   h3{
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-primary);
+   }  
+   :scope{
+    border: 2px solid var(--color-primary);
+    padding: 1rem;
+    border-radius: 8px;
+   }
+}
+
+@scope(.low-stock){
+    p{
+    color: var(--color-text);
+    font-weight: 500;
+   } 
+   h3{
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: #ece111;
+   }
+   :scope{
+    border: 2px solid #ece111;
+    padding: 1rem;
+    border-radius: 8px;
+   }
+}
+
+.search-wrapper{
+    margin-top: 1.5rem;
+    position: relative;
+    width: 100%;
+}
+
+.search-wrapper i{
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgb(99, 230, 190);
+    pointer-events: none;
+}
+
+.search-wrapper input{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 2px solid var(--color-primary);
+    border-radius: 5px;
+}
+
+.category-cta{
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 1rem;
+    gap: 10px;
+}
+
+.category-cta button{
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    background-color:transparent;
+}
+
+.category-cta span{
+    font-weight: 500;    
+}
+
+.category-cta button:hover{
+    background-color: var(--color-primary);
+    color: var(--color-background);
+}
+
+.products-table{
+    margin-top: 1.5rem;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+}
+
+.products-table thead {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+}
+
+.products-table th{
+    padding: 1rem;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: right;
+    letter-spacing: 0.05em;
+}
+
+.products-table th:first-child{
+    text-align: left;
+}
+
+.products-table td{
+    padding: 1rem;
+    font-size: 1rem;
+    color: var(--color-text);
+    text-align: right;
+    border-bottom: 1px solid #E5EAE5;
+}
+
+.products-table td:first-child{
+    text-align: left;
+    font-weight: 600;
+}
+
+.products-table tbody tr:hover{
+    background-color: var(--color-accent);
 }
 
 /* ========================== MEDIA QUERIES ============================== */

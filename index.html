@@ -73,7 +73,7 @@
             </section>
 
             <section class="recent-sales">
-                <div class="recent-header">
+                <div class="section-header">
                     <div class="recent-title">
                         <h2>Recent Sales</h2>
                         <p>Review and record store transactions</p>
@@ -100,8 +100,8 @@
 
                     <tfoot>
                         <tr>
-                            <th colspan="4" style="text-align: right;">TOTAL:</th>
-                            <th id="salesTotal">₱0.00</th>
+                            <th colspan="4" style="text-align: left;">TOTAL :</th>
+                            <th id="salesTotal"style="text-align: left;">₱0.00</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -137,6 +137,71 @@
                     </form>
                 </dialog>
             </section>
+
+            <section class="product-inventory">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Products</h2>
+                        <p>Manage your product inventory</p>
+                    </div>
+                    <div class="add-sale-cta">
+                        <button type="button">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-grid">
+                    <div class="total-products">
+                        <p>Total Products</p>
+                        <h3>0</h3>
+                        <p>Registered Items</p>
+                    </div>
+                    <div class="low-stock">
+                        <p>Low Stock</p>
+                        <h3>0</h3>
+                        <p>Items Below Threshold</p>
+                    </div>
+                </div>
+                
+               <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search products by name or category..."
+                    >
+                </div>
+
+                <div class="category-cta">
+                    <button type="button" id="categoryBtn">
+                        <span>All Products</span>
+                    </button>
+                    <button type="button" id="categoryBtn">
+                        <span>In Stock</span>
+                    </button>
+                    <button type="button" id="categoryBtn">
+                        <span>Low Stock</span>
+                    </button>
+                    <button type="button" id="categoryBtn">
+                        <span>Out of Stock</span>
+                    </button>
+                </div>
+
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>PRODUCT</th>
+                                <th>PRICE</th>
+                                <th>STOCK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+            </section>
+
         </main>
     </div>
     <script src="index.js"></script>
