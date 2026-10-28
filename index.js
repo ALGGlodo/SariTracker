@@ -11,18 +11,36 @@ const productPrice = document.getElementById("productPrice");
 const productQuantity = document.getElementById("productQuantity");
 const productSubtotal = document.getElementById("productSubtotal");
 const productNameInput = document.getElementById("productName");
+const productModal = document.getElementById("productModal");
+const openProductModalButton = document.getElementById("openProductModal");
+const closeProductModalButton = document.getElementById("closeProductModal");
+const cancelProductModal = document.getElementById("cancelProductModal");
+const productForm = document.getElementById("productForm");
+const productsTableBody = document.getElementById("productsTableBody");
+const totalProductsCount = document.getElementById("totalProductsCount");
+const lowStockCount = document.getElementById("lowStockCount");
+const newProductName = document.getElementById("newProductName");
+const newProductPrice = document.getElementById("newProductPrice");
+const newProductStock = document.getElementById("newProductStock");
+const dashboardTotalProducts = document.getElementById("dashboardTotalProducts");
+const dashboardLowStock = document.getElementById("dashboardLowStock");
 
 let sales = JSON.parse(localStorage.getItem("stockMateSales")) || [];
+sales = sales.map((sale, index) => ({
+    ...sale,
+    id: sale.id ?? Date.now() + index
+}));
+localStorage.setItem("stockMateSales", JSON.stringify(sales));
 
 /* DISPLAY SAVED SALES */
 function displaySales(){
     salesTableBody.innerHTML = "";
 
-    let totalSales = 0;
+    let total = 0;
 
     sales.forEach((sale) => {
-
-    const row = salesTableBody.insertRow(0);
+        const row = salesTableBody.insertRow(0);
+        
 
     row.insertCell().textContent = sale.dateTime;
     row.insertCell().textContent = sale.productName;
@@ -30,10 +48,45 @@ function displaySales(){
     row.insertCell().textContent = `₱${sale.orderPrice.toFixed(2)}`;
     row.insertCell().textContent = `₱${sale.subtotal.toFixed(2)}`;
 
-    totalSales += sale.subtotal;
+    const actionCell = row.insertCell();
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "Edit";
+    editButton.className = "edit-sale";
+    editButton.dataset.id = sale.id;
+    console.log("Clicked button:", editButton.className, "Sale ID:", sale.id);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "Delete";
+    deleteButton.className = "delete-sale";
+    deleteButton.dataset.id = sale.id;
+
+    actionCell.append(editButton, deleteButton);
+
+    total += Number(sale.subtotal || 0);
     });
-    salesTotal.textContent = `₱${totalSales.toFixed(2)}`;
-    todaySalesTotal.textContent = `₱${totalSales.toFixed(2)}`;
+    salesTotal.textContent = `₱${total.toFixed(2)}`;
+    
+
+    const today = new Date();
+
+    const todaysSales = sales.filter((sale) => {
+        const saleDate = new Date(sale.dateTime);
+
+        return(
+            saleDate.getDate() === today.getDate() &&
+            saleDate.getMonth() === today.getMonth() &&
+            saleDate.getFullYear() === today.getFullYear()
+        );
+    });
+
+
+    const todaysTotal = todaysSales.reduce((total, sale) => {
+        return total + Number(sale.subtotal || 0);
+    }, 0);
+    todaySalesTotal.textContent = `₱${todaysTotal.toFixed(2)}`;
 }
 
 function calculateSubtotal() {
@@ -67,6 +120,7 @@ salesForm.addEventListener("submit", (e) => {
     const dateTime = new Date().toLocaleString();
 
     const sale = {
+        id: Date.now(),
         dateTime,
         productName,
         orderPrice,
@@ -110,11 +164,44 @@ cancelButton.addEventListener("click", () => {
 /* DISPLAY SAVED SALES WHEN PAGE LOADS */
 displaySales();
 
+salesTableBody.addEventListener("click", (e) => {
+    const button = e.target.closest("button");
+
+    if(!button) return;
+
+    const saleId = Number(button.dataset.id);
+    console.log("Clicked button:", button.className, "Sale ID:", saleId);
+
+    if(button.classList.contains("edit-sale")){
+        const sale = sales.find((item) => item.id === saleId);
+
+        if(!sale) return
+
+        productNameInput.value = sale.productName;
+        productPrice.value = sale.orderPrice;
+        productQuantity.value = sale.quantity;
+
+        productSubtotal.value = (sale.orderPrice * sale.quantity).toFixed(2);
+
+        editingSaleId = sale.id;
+
+        saleModal.showModal();
+    }
+
+    if(button.classList.contains("delete-sale")){
+        const confirmed = confirm("Are you sure you want to delete this sale?");
+
+        if(!confirmed) return;
+
+        sales = sales.filter(sale => sale.id !== saleId);
+
+        localStorage.setItem("stockMatesSales", JSON.stringify(sales));
+
+        displaySales();
+    }
+});
+
 /* FOR PRODUCT MANAGEMENT STOCK MODAL */
-const productModal = document.getElementById("productModal");
-const openProductModalButton = document.getElementById("openProductModal");
-const closeProductModalButton = document.getElementById("closeProductModal");
-const cancelProductModal = document.getElementById("cancelProductModal");
 
 openProductModalButton.addEventListener("click", () => {
     productModal.showModal();
@@ -127,15 +214,6 @@ closeProductModalButton.addEventListener("click", () => {
 cancelProductModal.addEventListener("click", () => {
     productModal.close();
 });
-
-const productForm = document.getElementById("productForm");
-const productsTableBody = document.getElementById("productsTableBody");
-//const totalProductsCount = document.getElementById("totalProductsCount");
-const lowStockCount = document.getElementById("lowStockCount");
-
-const newProductName = document.getElementById("newProductName");
-const newProductPrice = document.getElementById("newProductPrice");
-const newProductStock = document.getElementById("newProductStock");
 
 let products = JSON.parse(localStorage.getItem("stockMateProducts")) || [];
 let editingProductId = null;
@@ -156,7 +234,7 @@ function displayProducts() {
         if(product.stock === 0){
             status.textContent = "Out of Stock";
             status.className = "stock-status out-of-stock";
-        }else if(product.stock <= 5){
+        }else if(product.stock >= 1 && product.stock <= 5){
             status.textContent = "Low Stock";
             status.className = "stock-status low-stock";
         }else{
@@ -166,6 +244,7 @@ function displayProducts() {
         statusCell.appendChild(status);
 
         const actionsCell = row.insertCell();
+        actionsCell.classList.add("sale-actions");
 
         const editButton = document.createElement("button");
         editButton.type = "button";
@@ -182,13 +261,14 @@ function displayProducts() {
         actionsCell.append(editButton, deleteButton);
     });
 
-    //totalProductsCount.textContent = products.length;
-    
-    const lowStockProducts = products.filter((product) => {
-    return product.stock >= 1 && product.stock <= 5;
-    });
+    totalProductsCount.textContent = products.length;
+    dashboardTotalProducts.textContent = `${products.length} Products`;
 
+    const lowStockProducts = products.filter((product) => {
+        return product.stock >= 1 && product.stock <= 5;
+    });
     lowStockCount.textContent = lowStockProducts.length;
+    dashboardLowStock.textContent = `${lowStockProducts.length} Products`;
 }
 
 openProductModalButton.addEventListener("click", () => {
