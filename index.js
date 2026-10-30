@@ -24,6 +24,17 @@ const newProductPrice = document.getElementById("newProductPrice");
 const newProductStock = document.getElementById("newProductStock");
 const dashboardTotalProducts = document.getElementById("dashboardTotalProducts");
 const dashboardLowStock = document.getElementById("dashboardLowStock");
+const customerBalanceDialog = document.getElementById("customerBalance");
+const viewBalanceBtn = document.getElementById("viewBalanceBtn");
+const closeBalanceModal = document.getElementById("closeBalanceModal");
+const customerBalanceForm = document.getElementById("customerBalanceForm");
+const customerNameInput = document.getElementById("customerName");
+const originalAmountInput = document.getElementById("originalAmount");
+const customerBalanceList = document.getElementById("customerBalanceList");
+const unpaidBalanceTableBody = document.getElementById("unpaidBalanceTableBody");
+const totalUnpaidBalance = document.getElementById("totalUnpaidBalance");
+const customersWithBalance = document.getElementById("customersWithBalance");
+const paymentsReceivedToday = document.getElementById("paymentsReceivedToday");
 
 let sales = JSON.parse(localStorage.getItem("stockMateSales")) || [];
 sales = sales.map((sale, index) => ({
@@ -359,3 +370,248 @@ productsTableBody.addEventListener("click", (e) => {
 /* LOAD SAVED PRODUCTS WHEN THE PAGE OPENS */
 
 displayProducts();
+
+/* CUSTOMER BALANCES SECTION */
+let customerBalances = JSON.parse(localStorage.getItem("stockMateBalances")) || [];
+
+customerBalances = customerBalances.map((entry, index) => ({
+    ...entry,
+    id: entry.id ??  Date.now() + index,
+    payments: entry.payments || [],
+    remainingBalance: Number(entry.remainingBalance ?? entry.originalAmount)
+}));
+
+function saveCustomerBalances(){
+    localStorage.setItem(
+        "stockMateBalances",
+        JSON.stringify(customerBalances)
+    );
+}
+function formatPeso(amount){
+    return `${Number(amount).toFixed(2)}`;
+}
+function getBalanceStatus(entry){
+    if(entry.remainingBalance <= 0) return "Paid";
+    if(entry.remainingBalance < entry.originalAmount) return "Partial";
+    return "Unpaid";
+}
+function displayCustomerBalances(){
+    unpaidBalanceTableBody.innerHTML = "";
+    customerBalanceList.innerHTML = "";
+
+    customerBalances.forEach((entry) => {
+        const status = getBalanceStatus(entry);
+        const dataText = new Date(entry.dateTime).toLocaleString();
+
+        const row = unpaidBalanceTableBody.insertRow();
+
+        row.insertCell().textContent = entry.customerName;
+        row.insertCell().textContent = dataText;
+        row.insertCell().textContent = formatPeso(entry.originalAmount);
+        row.insertCell().textContent = formatPeso(entry.remainingBalance);
+
+        const statusCell = row.insertCell();
+        const statusBadge = document.createElement("span");
+        statusBadge.className = `balance-status ${status.toLowerCase()}`;
+        statusBadge.textContent = status;
+        statusCell.appendChild(statusBadge);
+
+        const card = document.createElement("div");
+        card.className = "balance-card";
+
+        if(status === "Paid"){
+            card.classList.add("is-paid");
+        }
+
+         const top = document.createElement("div");
+        top.className = "balance-entry-top";
+
+        const name = document.createElement("span");
+        name.className = "balance-entry-name";
+        name.textContent = entry.customerName;
+
+        const badge = document.createElement("span");
+        badge.className = `balance-status ${status.toLowerCase()}`;
+        badge.textContent = status;
+
+        top.append(name, badge);
+
+        const date = document.createElement("p");
+        date.className = "balance-entry-date";
+        date.textContent = dataText;
+
+        const details = document.createElement("div");
+        details.className = "balance-entry-details";
+
+        const original = document.createElement("span");
+        original.textContent = `Original: ${formatPeso(entry.originalAmount)}`;
+
+        const remaining = document.createElement("strong");
+        remaining.textContent = `Remaining: ${formatPeso(entry.remainingBalance)}`;
+
+        details.append(original, remaining);
+
+        const actions = document.createElement("div");
+        actions.className = "balance-entry-actions";
+
+        if (status !== "Paid") {
+            const paymentButton = document.createElement("button");
+            paymentButton.type = "button";
+            paymentButton.className = "record-payment-btn";
+            paymentButton.dataset.id = entry.id;
+            paymentButton.textContent = "Record Payment";
+            actions.appendChild(paymentButton);
+        }
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-balance-btn";
+        deleteButton.dataset.id = entry.id;
+        deleteButton.textContent = "Delete Entry";
+        actions.appendChild(deleteButton);
+
+        card.append(top, date, details, actions);
+        customerBalanceList.appendChild(card);
+    });
+
+    if (customerBalances.length === 0) {
+        unpaidBalanceTableBody.innerHTML =
+            '<tr><td colspan="5">No customer balances recorded yet.</td></tr>';
+
+        customerBalanceList.innerHTML =
+            '<p class="empty-balance">No utang entries yet. Add the first one above.</p>';
+    }
+
+    // Dashboard summaries
+    const unpaidEntries = customerBalances.filter(
+        (entry) => entry.remainingBalance > 0
+    );
+
+    const totalOwed = unpaidEntries.reduce(
+        (total, entry) => total + entry.remainingBalance,
+        0
+    );
+
+    const uniqueCustomers = new Set(
+        unpaidEntries.map((entry) => entry.customerName.trim().toLowerCase())
+    );
+
+    const today = new Date();
+
+    const paymentsToday = customerBalances.reduce((total, entry) => {
+        const dailyPayments = entry.payments.filter((payment) => {
+            const paymentDate = new Date(payment.dateTime);
+
+            return (
+                paymentDate.getDate() === today.getDate() &&
+                paymentDate.getMonth() === today.getMonth() &&
+                paymentDate.getFullYear() === today.getFullYear()
+            );
+        });
+
+        return total + dailyPayments.reduce(
+            (sum, payment) => sum + Number(payment.amount),
+            0
+        );
+    }, 0);
+
+    totalUnpaidBalance.textContent = formatPeso(totalOwed);
+    customersWithBalance.textContent = uniqueCustomers.size;
+    paymentsReceivedToday.textContent = formatPeso(paymentsToday);
+}
+
+    saveCustomerBalances();
+    displayCustomerBalances();
+
+    // Open and close the ledger
+    viewBalanceBtn.addEventListener("click", () => {
+    customerBalanceDialog.showModal();
+    });
+
+    closeBalanceModal.addEventListener("click", () => {
+    customerBalanceDialog.close();
+    });
+
+    // Add a new credit entry
+    customerBalanceForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const customerName = customerNameInput.value.trim();
+    const originalAmount = Number(originalAmountInput.value);
+
+    if (!customerName || !Number.isFinite(originalAmount) || originalAmount <= 0) {
+        alert("Enter a customer name and a valid amount.");
+        return;
+    }
+
+    customerBalances.unshift({
+        id: Date.now(),
+        customerName,
+        dateTime: new Date().toISOString(),
+        originalAmount,
+        remainingBalance: originalAmount,
+        payments: []
+    });
+
+    saveCustomerBalances();
+    displayCustomerBalances();
+    customerBalanceForm.reset();
+});
+
+// Record partial or full payments; handle ledger buttons
+    customerBalanceList.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+
+    if (!button) return;
+
+    const entryId = Number(button.dataset.id);
+    const entry = customerBalances.find((item) => item.id === entryId);
+
+    if (!entry) return;
+
+    if (button.classList.contains("record-payment-btn")) {
+        const answer = prompt(
+            `Remaining balance: ${formatPeso(entry.remainingBalance)}\nEnter payment amount:`
+        );
+
+        if (answer === null || answer.trim() === "") return;
+
+        const amount = Number(answer);
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            alert("Enter a valid payment amount greater than zero.");
+            return;
+        }
+
+        if (amount > entry.remainingBalance) {
+            alert("Payment cannot exceed the remaining balance.");
+            return;
+        }
+
+        entry.remainingBalance = Math.max(
+            0,
+            Math.round((entry.remainingBalance - amount) * 100) / 100
+        );
+
+        entry.payments.push({
+            amount,
+            dateTime: new Date().toISOString()
+        });
+
+        saveCustomerBalances();
+        displayCustomerBalances();
+    }
+
+    if (button.classList.contains("delete-balance-btn")) {
+        if (!confirm(`Delete ${entry.customerName}'s balance entry and its payment history?`)) {
+            return;
+        }
+
+        customerBalances = customerBalances.filter(
+            (item) => item.id !== entryId
+        );
+
+        saveCustomerBalances();
+        displayCustomerBalances();
+    }
+});

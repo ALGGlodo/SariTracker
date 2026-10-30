@@ -674,6 +674,510 @@ section.recent-sales {
     white-space: nowrap;
 }
 
+/* ========================== UNPAID BALANCE ============================== */
+.unpaid-balance{
+    background: var(--color-background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-primary);
+    margin-top: 2rem;
+    color: var(--color-text);
+}
+
+.unpaid-balance .section-header {
+    margin-bottom: 1.5rem;
+}
+
+.unpaid-balance .section-title h2 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin-bottom: 0.35rem;
+}
+
+.unpaid-balance .section-title p {
+    color: #68756b;
+    font-size: 0.9rem;
+}
+
+#viewBalanceBtn,
+#customerBalanceForm button[type="submit"] {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 0.7rem 1rem;
+    font: 600 0.9rem var(--font-body);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* CENTER THE MODAL */
+#customerBalance {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+
+    width: min(680px, calc(100% - 2rem));
+    max-height: 85vh;
+    overflow-y: auto;
+
+    padding: 0;
+    border: 1px solid #e2eae3;
+    border-radius: 16px;
+
+    color: var(--color-text);
+    background: var(--color-background);
+    box-shadow: 0 20px 60px rgb(17 24 19 / 20%);
+}
+
+#customerBalance::backdrop {
+    background: rgb(17 24 19 / 55%);
+    backdrop-filter: blur(3px);
+}
+
+/* MODAL CONTENT */
+.balance-modal {
+    width: 100%;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+/* MODAL HEADER */
+#customerBalance .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#customerBalance .modal-header > div {
+    min-width: 0;
+}
+
+#customerBalance .modal-header h2 {
+    margin-bottom: 0.35rem;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+}
+
+#customerBalance .modal-header p,
+.balance-ledger > p {
+    color: #68756b;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+/* ADD UTANG FORM */
+#customerBalanceForm {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+
+    width: 100%;
+    padding: 1.2rem;
+    box-sizing: border-box;
+
+    background: white;
+    border: 1px solid #e2eae3;
+    border-radius: 12px;
+}
+
+#customerBalanceForm .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+#customerBalanceForm input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.75rem 0.85rem;
+    box-sizing: border-box;
+
+    border: 1px solid #d5e0d7;
+    border-radius: 7px;
+    background: #fcfefc;
+
+    color: var(--color-text);
+    font: 0.9rem var(--font-body);
+}
+
+#customerBalanceForm input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgb(22 61 42 / 10%);
+}
+
+/* CUSTOMER LEDGER */
+.balance-ledger {
+    margin-top: 1.5rem;
+    font-family: var(--font-body);
+}
+
+.balance-ledger h3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+}
+
+.balance-ledger > p {
+    margin: 0.35rem 0 1rem;
+}
+
+.balance-ledger-content {
+    display: grid;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 480px) {
+    #customerBalance {
+        width: calc(100% - 1rem);
+        max-height: 90vh;
+        border-radius: 12px;
+    }
+
+    .balance-modal {
+        padding: 1rem;
+    }
+
+    #customerBalanceForm {
+        padding: 0.9rem;
+    }
+}
+
+
+#viewBalanceBtn:hover,
+#customerBalanceForm button[type="submit"]:hover {
+    background: #24543b;
+}
+
+.unpaid-balance table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.unpaid-balance th{
+    background: var(--color-accent);
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.9rem;
+    white-space: nowrap;
+    font-family: var(--font-heading);
+}
+
+.unpaid-balance td {
+    padding: 0.9rem;
+    border-bottom: 1px solid #e2eae3;
+    font-size: 0.88rem;
+}
+
+.unpaid-balance tbody tr:hover {
+    background: #f0f6f1;
+}
+
+
+.total-unpaid-balance,
+.customer-balance {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: white;
+    border: 1px solid #e2eae3;
+    border-radius: 10px;
+}
+
+.total-unpaid-balance p,
+.customer-balance p {
+    color: #68756b;
+    font-size: 0.88rem;
+}
+
+.total-unpaid-balance span {
+    color: var(--color-primary);
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.customer-balance > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+
+
+.customer-balance span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* CUSTOMER BALANCE DIALOG */
+#customerBalance {
+    width: min(680px, calc(100% - 2rem));
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 0;
+    border: 1px solid #e2eae3;
+    border-radius: 16px;
+    color: var(--color-text);
+    background: var(--color-background);
+    box-shadow: 0 20px 60px rgb(17 24 19 / 20%);
+}
+
+#customerBalance::backdrop {
+    background: rgb(17 24 19 / 55%);
+    backdrop-filter: blur(3px);
+}
+
+.balance-modal {
+    padding: 1.5rem;
+}
+
+#customerBalance .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#customerBalance .modal-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    margin-bottom: 0.35rem;
+}
+
+#customerBalance .modal-header p,
+.balance-ledger > p {
+    color: #68756b;
+    font-size: 0.88rem;
+}
+
+#closeBalanceModal {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-accent);
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#customerBalanceForm {
+    display: grid;
+    gap: 1rem;
+    padding: 1.2rem;
+    background: white;
+    border: 1px solid #e2eae3;
+    border-radius: 12px;
+}
+
+#customerBalanceForm h3,
+.balance-ledger h3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+}
+
+#customerBalanceForm .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.form-group label {
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-family: var(--font-body);
+}
+
+#customerBalanceForm label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+#customerBalanceForm input {
+    width: 100%;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #d5e0d7;
+    border-radius: 7px;
+    background: #fcfefc;
+    color: var(--color-text);
+    font: 0.9rem var(--font-body);
+    outline: none;
+}
+
+#customerBalanceForm input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgb(22 61 42 / 10%);
+}
+
+#customerBalanceForm button[type="submit"] {
+    justify-self: start;
+    margin-top: 0.25rem;
+}
+
+.balance-ledger {
+    margin-top: 1.5rem;
+}
+
+.balance-ledger > p {
+    margin-top: 0.35rem;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+}
+
+.balance-ledger-content {
+    display: grid;
+    gap: 0.75rem;
+}
+
+
+.balance-entry {
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e2eae3;
+    border-radius: 10px;
+}
+
+.balance-entry.is-paid {
+    opacity: 0.7;
+    background: #f0f6f1;
+}
+
+.balance-entry.is-paid .balance-entry-name {
+    text-decoration: line-through;
+}
+
+.balance-entry-top,
+.balance-entry-details,
+.balance-entry-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.balance-entry-top {
+    margin-bottom: 0.75rem;
+}
+
+.balance-entry-name {
+    font-weight: 700;
+}
+
+.balance-entry-date,
+.balance-entry-details {
+    color: #68756b;
+    font-size: 0.82rem;
+}
+
+.balance-entry-details {
+    justify-content: flex-start;
+    margin-bottom: 0.85rem;
+}
+
+.balance-entry-details strong {
+    color: var(--color-text);
+}
+
+.balance-status {
+    display: inline-block;
+    padding: 0.3rem 0.55rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.balance-status.unpaid {
+    color: #8b4c00;
+    background: #fff0d4;
+}
+
+.balance-status.partial {
+    color: #245d91;
+    background: #e4f1ff;
+}
+
+.balance-status.paid {
+    color: #21613b;
+    background: #dcefe1;
+}
+
+.balance-entry-actions {
+    justify-content: flex-start;
+}
+
+.balance-entry-actions button {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font: 600 0.82rem var(--font-body);
+    cursor: pointer;
+}
+
+.record-payment-btn {
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.delete-balance-btn {
+    background: #fce4e4;
+    border: 1px solid #e8baba;
+    color: #a52828;
+}
+
+.empty-balance {
+    padding: 1.5rem;
+    text-align: center;
+    color: #68756b;
+    background: white;
+    border: 1px dashed #cbd8ce;
+    border-radius: 10px;
+}
+
+@media (max-width: 650px) {
+    .unpaid-balance {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .unpaid-balance .section-header {
+        align-items: flex-start;
+    }
+
+    .unpaid-balance table {
+        min-width: 650px;
+    }
+
+    .total-unpaid-balance,
+    .customer-balance {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .customer-balance {
+        gap: 1.25rem;
+    }
+
+    #customerBalance .balance-modal {
+        padding: 1rem;
+    }
+}
+
+
+
 /* ========================== MEDIA QUERIES ============================== */
 @media (max-width: 1100px) {
     .dashboard-grid {
