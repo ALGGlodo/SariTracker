@@ -15,8 +15,8 @@
             <h2>SARI-TRACKER</h2>
 
             <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Products</a></li>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="products.html">Products</a></li>
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Reports</a></li>
             </ul>
@@ -44,7 +44,9 @@
                         <h3>Total Products</h3>
                         <p id="dashboardTotalProducts">0 Products</p>
                         <div class="add-btn">
-                            <button>+ Add a product</button>
+                            <button type="button" class="open-product-modal" aria-label="Add product">
+                                + Add a product
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -55,7 +57,7 @@
                         <h3>Low Stocks</h3>
                         <p id="dashboardLowStock">0 Products</p>
                         <div class="add-btn">
-                            <button>+ Restock</button>
+                            <button type="button" class="open-product-modal">+ Restock</button>
                         </div>
                     </div>
                 </div>
@@ -66,7 +68,7 @@
                         <h3>Total Unpaid Balance</h3>
                         <p id="totalUnpaidBalance">₱0.00</p>
                         <div class="add-btn">
-                            <button>+ View Customer Balance</button>
+                            <button type="button" class="open-balance-modal">+ View Customer Balance</button>
                         </div>
                     </div>
                 </div>
@@ -101,7 +103,7 @@
 
                     <tfoot>
                         <tr>
-                            <th colspan="4" style="text-align: left;">TOTAL :</th>
+                            <th colspan="10" style="text-align: left;">TOTAL :</th>
                             <th id="salesTotal"style="text-align: left;">₱0.00</th>
                         </tr>
                     </tfoot>
@@ -146,7 +148,7 @@
                         <p>Manage your product inventory</p>
                     </div>
                     <div class="add-sale-cta">
-                        <button type="button" id="openProductModal" aria-label="Add product">
+                        <button type="button" class="open-product-modal" aria-label="Add product">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -242,7 +244,9 @@
                         <p>Track and manage customer balances</p>
                     </div>
                     <div class="add-sale-cta">
-                        <button type="button" id="viewBalanceBtn">View Balance</button>
+                       <button type="button" class="open-balance-modal">
+                            View Balance
+                        </button>
                     </div>
                 </div>
                 <table>
@@ -274,7 +278,7 @@
                     </div>
                 </div>
 
-                <dialog id="customerBalance" open>
+                <dialog id="customerBalance">
                     <div class="balance-modal">
                         <div class="modal-header">
                             <div>
@@ -328,6 +332,6 @@
         </main>
     </div>
 
-    <script src="index.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>

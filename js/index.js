@@ -1,4 +1,3 @@
-/*FOR MODAL*/
 const saleModal = document.getElementById("saleModal");
 const openSaleButtons = document.querySelectorAll(".open-sale-modal");
 const closeModal = document.getElementById("closeModal");
@@ -12,7 +11,6 @@ const productQuantity = document.getElementById("productQuantity");
 const productSubtotal = document.getElementById("productSubtotal");
 const productNameInput = document.getElementById("productName");
 const productModal = document.getElementById("productModal");
-const openProductModalButton = document.getElementById("openProductModal");
 const closeProductModalButton = document.getElementById("closeProductModal");
 const cancelProductModal = document.getElementById("cancelProductModal");
 const productForm = document.getElementById("productForm");
@@ -25,7 +23,7 @@ const newProductStock = document.getElementById("newProductStock");
 const dashboardTotalProducts = document.getElementById("dashboardTotalProducts");
 const dashboardLowStock = document.getElementById("dashboardLowStock");
 const customerBalanceDialog = document.getElementById("customerBalance");
-const viewBalanceBtn = document.getElementById("viewBalanceBtn");
+const openBalanceModalButtons = document.querySelectorAll(".open-balance-modal");
 const closeBalanceModal = document.getElementById("closeBalanceModal");
 const customerBalanceForm = document.getElementById("customerBalanceForm");
 const customerNameInput = document.getElementById("customerName");
@@ -213,11 +211,6 @@ salesTableBody.addEventListener("click", (e) => {
 });
 
 /* FOR PRODUCT MANAGEMENT STOCK MODAL */
-
-openProductModalButton.addEventListener("click", () => {
-    productModal.showModal();
-});
-
 closeProductModalButton.addEventListener("click", () => {
     productModal.close();
 });
@@ -282,14 +275,18 @@ function displayProducts() {
     dashboardLowStock.textContent = `${lowStockProducts.length} Products`;
 }
 
-openProductModalButton.addEventListener("click", () => {
-    editingProductId = null;
-    productForm.reset();
+const openProductModalButtons = document.querySelectorAll(".open-product-modal");
 
-    document.getElementById("productModalTitle").textContent = "Add Product";
-    document.getElementById("saveProductButton").textContent = "Save Product";
+openProductModalButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        editingProductId = null;
+        productForm.reset();
 
-    productModal.showModal();
+        document.getElementById("productModalTitle").textContent = "Add Product";
+        document.getElementById("saveProductButton").textContent = "Save Product";
+
+        productModal.showModal();
+    });
 });
 
 productForm.addEventListener("submit", (e) => {
@@ -524,8 +521,10 @@ function displayCustomerBalances(){
     displayCustomerBalances();
 
     // Open and close the ledger
-    viewBalanceBtn.addEventListener("click", () => {
-    customerBalanceDialog.showModal();
+    openBalanceModalButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            customerBalanceDialog.showModal();
+        });
     });
 
     closeBalanceModal.addEventListener("click", () => {
