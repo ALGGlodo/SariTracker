@@ -1,5 +1,7 @@
 const API_URL = "http://localhost:3000/api/products";
 
+let editingProductId = null;
+
 const productsTable = document.getElementById('productsTable');
 
 const addProductForm  = document.getElementById('addProductForm');
@@ -31,26 +33,34 @@ addProductForm.addEventListener("submit", async (event) => {
         price: Number(productPriceInput.value)
     };
     try{
-        const response = await fetch(API_URL, {
-            method: "POST",
+        const url = editingProductId ? `${API_URL}/${editingProductId}` : API_URL;
+
+        const method = editingProductId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(newProduct)
-        });
+        })
+
         const result = await response.json();
         if(!response.ok){
             throw new Error(result.message || "Failed to add product.");
         }
-        console.log("Product added:", result);
+        console.log("Product saved:", result);
         
         addProductForm.reset();
+        editingProductId = null;
 
         fetchProducts();
     }catch(error){
         console.error("Error adding product:", error);
     }
-})
+});
+    
+
 
 function displayProducts(products){
     productsTable.replaceChildren(); // Clear existing rows
@@ -76,7 +86,52 @@ function displayProducts(products){
 
         nameCell.textContent = `${product.product_name} (${product.category})`;
         priceCell.textContent = `₱${Number(product.price).toFixed(2)}`;
-        actionCell.textContent = "Comming Soon";
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.dataset.id = product.id;
+
+        actionCell.appendChild(editBtn);
+
+        editBtn.addEventListener("click", () => {
+            const selectedProduct = products.find(item => item.id === product.id)
+
+            editingProductId = selectedProduct.id;
+
+            productNameInput.value = selectedProduct.product_name;
+            productCategoryInput.value = selectedProduct.category;
+            productPriceInput.value = selectedProduct.price;
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.dataset.id = product.id;
+
+        actionCell.appendChild(deleteBtn);
+
+        deleteBtn.addEventListener("click", async () => {
+    const confirmDelete = confirm("Are you sure you want to delete this product?");
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/${product.id}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete product.");
+        }
+
+        fetchProducts();
+
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    });
+
+  
 
         row.appendChild(nameCell);
         row.appendChild(priceCell);
