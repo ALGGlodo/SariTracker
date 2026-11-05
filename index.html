@@ -195,6 +195,7 @@
                         <thead>
                             <tr>
                                 <th>PRODUCT</th>
+                                <th>CATEGORY</th>
                                 <th>PRICE</th>
                                 <th>STOCK</th>
                                 <th>STATUS</th>
@@ -221,6 +222,17 @@
                         <div class="new-product-input">
                             <label for="newProductName">Product Name</label>
                             <input type="text" id="newProductName" name="newProductName" placeholder="Enter product name" required>
+
+                            <label for="newProductCategory">Category</label>
+                                <select id="newProductCategory" name="newProductCategory" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <option value="Foods">Foods</option>
+                                    <option value="Beverages">Beverages</option>
+                                    <option value="Snacks">Snacks</option>
+                                    <option value="Canned Goods">Canned Goods</option>
+                                    <option value="Personal Care">Personal Care</option>
+                                    <option value="Household">Household</option>
+                                </select>
 
                             <label for="newProductPrice">Price (₱)</label>
                             <input type="number" id="newProductPrice" name="newProductPrice" placeholder="Enter price" required>

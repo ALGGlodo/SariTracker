@@ -18,6 +18,7 @@ const productsTableBody = document.getElementById("productsTableBody");
 const totalProductsCount = document.getElementById("totalProductsCount");
 const lowStockCount = document.getElementById("lowStockCount");
 const newProductName = document.getElementById("newProductName");
+const newProductCategory = document.getElementById("newProductCategory");
 const newProductPrice = document.getElementById("newProductPrice");
 const newProductStock = document.getElementById("newProductStock");
 const dashboardTotalProducts = document.getElementById("dashboardTotalProducts");
@@ -219,8 +220,25 @@ cancelProductModal.addEventListener("click", () => {
     productModal.close();
 });
 
-let products = JSON.parse(localStorage.getItem("stockMateProducts")) || [];
+let products = [];
 let editingProductId = null;
+
+const PRODUCTS_API_URL = "http://localhost:3000/api/products";
+
+async function fetchDashboardProducts(){
+    try{
+        const response = await fetch(PRODUCTS_API_URL);
+
+        if(!response.ok){
+            throw new Error("Failed to retrieve products from the server.");
+        }
+        products = await response.json();
+
+        displayProducts();
+    }catch(error){
+        console.error("Error fetching dashboard products:", error);
+    }
+}
 
 function displayProducts() {
     productsTableBody.innerHTML = "";
@@ -228,8 +246,9 @@ function displayProducts() {
     products.forEach((product) => {
         const row = productsTableBody.insertRow();
 
-        row.insertCell().textContent = product.name;
-        row.insertCell().textContent = `₱${product.price.toFixed(2)}`;
+        row.insertCell().textContent = product.product_name;
+        row.insertCell().textContent = product.category;
+        row.insertCell().textContent = `₱${Number(product.price).toFixed(2)}`;
         row.insertCell().textContent = product.stock;
 
         const statusCell = row.insertCell();
@@ -289,43 +308,57 @@ openProductModalButtons.forEach(button => {
     });
 });
 
-productForm.addEventListener("submit", (e) => {
+productForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const productName = newProductName.value.trim();
+    const productCategory = newProductCategory.value;
     const productPrice = Number(newProductPrice.value);
     const productStock = Number(newProductStock.value);
 
-    if(!productName || !Number.isFinite(productPrice) || productPrice <= 0 || !Number.isInteger(productStock) || productStock < 0){
+    if(!productName || !productCategory || !Number.isFinite(productPrice) || productPrice <= 0 || !Number.isInteger(productStock) || productStock < 0){
         return;
     }
 
-    if(editingProductId !== null){
-        const product = products.find((item) => {
-            return item.id === editingProductId;
+    const newProduct = {
+        product_name: productName,
+        category: productCategory,
+        price: productPrice,
+        stock: productStock
+    }
+
+    try{
+
+        const url = editingProductId !== null ? `${PRODUCTS_API_URL}/${editingProductId}` : PRODUCTS_API_URL;
+
+        const method = editingProductId !== null ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newProduct)
         });
-        if(product){
-            product.name = productName;
-            product.price = productPrice;
-            product.stock = productStock;
+
+        const result = await response.json();
+
+        if(!response.ok){
+            throw new Error(result.error || "Failed to save product.");
         }
-    }else{
-            const product = {
-                id: Date.now(),
-                name: productName,
-                price: productPrice,
-                stock: productStock
-            };
-            products.unshift(product);
-        }
-        localStorage.setItem("stockMateProducts", JSON.stringify(products));
-        displayProducts();
+        console.log("Product saved successfully:", result);
+
         productForm.reset();
-        editingProductId = null;    
+        editingProductId = null;
         productModal.close();
+
+        await fetchDashboardProducts();
+    }catch(error){
+        console.error("Error adding product:", error);
+        }
     });
 
-productsTableBody.addEventListener("click", (e) => {
+productsTableBody.addEventListener("click", async (e) => {
     const button = e.target.closest("button");
 
     if (!button) return;
@@ -339,7 +372,8 @@ productsTableBody.addEventListener("click", (e) => {
 
         editingProductId = product.id;
 
-        newProductName.value = product.name;
+        newProductName.value = product.product_name;
+        newProductCategory.value = product.category;
         newProductPrice.value = product.price;
         newProductStock.value = product.stock;
 
@@ -354,19 +388,26 @@ productsTableBody.addEventListener("click", (e) => {
 
         if (!confirmed) return;
         
-        products = products.filter((product) => {
-            return product.id !== productId;
-        });
+        try{
+            const response = await fetch(`${PRODUCTS_API_URL}/${productId}`, {
+               method: "DELETE" 
+            });
 
-        localStorage.setItem("stockMateProducts", JSON.stringify(products));
+            const result = await response.json();
 
-        displayProducts();
+            if(!response.ok){
+                throw new Error(result.error || "Failed to delete product.");
+            }
+
+            await fetchDashboardProducts();
+        }catch(error){
+            console.log("Error deleting product:", error);
+        }
     }
 });
 
 /* LOAD SAVED PRODUCTS WHEN THE PAGE OPENS */
-
-displayProducts();
+fetchDashboardProducts();
 
 /* CUSTOMER BALANCES SECTION */
 let customerBalances = JSON.parse(localStorage.getItem("stockMateBalances")) || [];

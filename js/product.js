@@ -1,6 +1,8 @@
 const API_URL = "http://localhost:3000/api/products";
 
 let editingProductId = null;
+let allProducts = [];
+let selectedCategory = "All";
 
 const productsTable = document.getElementById('productsTable');
 
@@ -15,14 +17,26 @@ async function fetchProducts() {
         if(!response.ok){
             throw new Error("Failed to retrieve products.");
         }
-        const products = await response.json();
         
-        displayProducts(products);
+        allProducts = await response.json();
+        
+        displayProducts(allProducts);
+
     }catch(error){
          console.error("Error fetching products:", error);
     }
 }
 fetchProducts();
+
+function applyFilters(){
+    const searchValue = searchProduct.value.toLowerCase().trim();
+    const filteredProducts = allProducts.filter(product => 
+        (product.product_name.toLowerCase().includes(searchValue) ||
+        product.category.toLowerCase().includes(searchValue)) &&
+        (selectedCategory === "All" || (product.category === selectedCategory))
+    );
+    displayProducts(filteredProducts);
+}
 
 addProductForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -140,3 +154,37 @@ function displayProducts(products){
         productsTable.appendChild(row);
     });
 }
+
+ 
+//FOR FILTERING PRODUCTS BY CATEGORY
+const filterButtons = document.getElementById("filter-button");
+const filterOptions = document.getElementById("filterOptions");
+const searchProduct = document.getElementById("searchProduct");
+
+searchProduct.addEventListener("input", () => {
+    applyFilters();
+})
+
+filterButtons.addEventListener("click", () => {
+    filterOptions.hidden = !filterOptions.hidden;
+});
+
+const categoryBtn = filterOptions.querySelectorAll("button");
+
+categoryBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        selectedCategory = button.dataset.category;
+
+        filterButtons.textContent = selectedCategory === "All"
+        ? "All Categories"
+        : selectedCategory;
+
+        filterOptions.hidden = true;
+        applyFilters();
+
+        const filteredProducts = selectedCategory === "All" ? allProducts : allProducts.filter
+        (product => product.category === selectedCategory);
+
+        displayProducts(filteredProducts);
+    });
+});

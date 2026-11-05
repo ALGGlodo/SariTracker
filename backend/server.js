@@ -34,23 +34,29 @@ app.get("/api/test-db", async (req, res) => {
  
 app.post("/api/products", async (req, res) => {
     try{
-        const {product_name, category, price} = req.body
+        const {product_name, category, price, stock} = req.body
 
-        if(!product_name?.trim() || !category?.trim() || !price === undefined){
+         if (!product_name?.trim() || !category?.trim() || price === undefined || price === null || price === "" || stock === undefined || stock === null || stock === ""){
             return res.status(400).json({
-                error: "Missing required fields: product_name, category, price"
+                error: "Missing required fields: product_name, category, price, stock"
             });
         }
         const productPrice = Number(price);
+        const productStock = Number(stock);
 
         if(!Number.isFinite(productPrice) || productPrice <= 0){
             return res.status(400).json({
                 error: "Price must be a valid number greater than zero."
             });
         }
+        if(!Number.isFinite(productStock) || productStock < 0){
+            return res.status(400).json({
+                error: "Stock must be a valid number greater than or equal to zero."
+            });
+        }
         const result = await pool.query(
-            `INSERT INTO products (product_name, category, price) VALUES ($1, $2, $3) RETURNING *`,
-            [product_name.trim(), category.trim(), productPrice]
+            `INSERT INTO products (product_name, category, price, stock) VALUES ($1, $2, $3, $4) RETURNING *`,
+            [product_name.trim(), category.trim(), productPrice, productStock]
         );
         res.status(201).json({
             message: "Product added successfully",
@@ -65,9 +71,9 @@ app.post("/api/products", async (req, res) => {
 app.put("/api/products/:id", async (req, res) => {
     try{
         const {id} = req.params;
-        const {product_name, category, price} = req.body;
+        const {product_name, category, price, stock = 0} = req.body;
         
-        if(!product_name?.trim || !category.trim || !price === undefined){
+        if (!product_name?.trim() || !category?.trim() || price === undefined || price === null || price === "") {
             return res.status(400).json({
                 error: "Missing required fields: product_name, category, price"
             });
@@ -80,21 +86,27 @@ app.put("/api/products/:id", async (req, res) => {
             });
         }
 
-        console.log("Product update values:", [
-        product_name.trim(),
-        category.trim(),
-        productPrice,
-        id
-    ]);
+        if (
+            stock !== undefined &&
+            (!Number.isInteger(Number(stock)) || Number(stock) < 0)
+        ) {
+            return res.status(400).json({
+                error: "Stock must be a non-negative whole number."
+            });
+        }
+
+
         const result = await pool.query(
             `UPDATE products 
             SET product_name = $1,
             category = $2,
             price = $3,
+            stock = CASE WHEN $4::boolean THEN $5 ELSE stock END,
             updated_at = CURRENT_TIMESTAMP
-            WHERE id = $4
+            WHERE id = $6
             RETURNING *`,
-            [product_name.trim(), category.trim(), productPrice, id]
+            [product_name.trim(), category.trim(), productPrice, stock !== undefined, 
+                stock === undefined ? null : Number(stock) ,id]
         );
         
         if(result.rows.length === 0){
@@ -107,8 +119,6 @@ app.put("/api/products/:id", async (req, res) => {
     }catch(error){
         console.log("Error updating product:", error);
         res.status(500).json({error: "Failed to update product"});
-        console.error("SQL error detail:", error.message);
-        console.error("SQL position:", error.position);
     }
 });
 
