@@ -135,6 +135,49 @@ p, span, a, li {
     border-collapse: collapse;
     margin-top: 20px;
     font-family: var(--font-body);
+    text-align: left;
+}
+
+.products-content th {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    padding: 12px;
+    border-bottom: 1px solid var(--color-accent);
+    font-weight: 600;
+}
+
+.products-content th, .products-content td {
+    padding: 12px;
+    border-bottom: 1px solid var(--color-accent);
+}
+
+.product-name{
+    font-weight: 600;
+}
+
+.action-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.edit-btn{
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+}
+
+.delete-btn{
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #FCE4E4;
+    color: #A52828;
+
 }
 
 .filter{
@@ -170,4 +213,20 @@ p, span, a, li {
 .filter-options button:hover {
     background: #f0f0f0;
     color: var(--color-primary);
+}
+
+.search{
+    margin-top: 10px;
+    position: relative;
+    max-width: 300px;
+}
+
+.search input{
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid var(--color-accent);
+    border-radius: 4px;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 1rem;
 }

@@ -34,6 +34,13 @@ const unpaidBalanceTableBody = document.getElementById("unpaidBalanceTableBody")
 const totalUnpaidBalance = document.getElementById("totalUnpaidBalance");
 const customersWithBalance = document.getElementById("customersWithBalance");
 const paymentsReceivedToday = document.getElementById("paymentsReceivedToday");
+//FOR SEARCH AND FILTER IN THE PRODUCT MANAGEMENT SECTION OF THE DASHBOARD
+const searchInput = document.getElementById("searchInput");
+const categoryFilters = document.querySelectorAll(".category-filter");
+
+
+let selectedStockStatus = "all";
+//
 
 let sales = JSON.parse(localStorage.getItem("stockMateSales")) || [];
 sales = sales.map((sale, index) => ({
@@ -240,10 +247,40 @@ async function fetchDashboardProducts(){
     }
 }
 
-function displayProducts() {
+function applyProductFilters() {
+    const searchValue = searchInput.value.trim().toLowerCase();
+
+    const filteredProducts = products.filter((product) => {
+        const matchesSearch = product.product_name.toLowerCase().includes(searchValue) ||
+        product.category.toLowerCase().includes(searchValue);
+    
+    const stock = Number(product.stock);
+
+    const matchedStatus = selectedStockStatus === "all" ||
+    (selectedStockStatus === "in-stock" && stock > 5) ||
+    (selectedStockStatus === "low-stock" && stock >= 1 && stock <= 5) ||
+    (selectedStockStatus === "out-of-stock" && stock === 0);
+
+    return matchesSearch && matchedStatus;
+    });
+    displayProducts(filteredProducts);
+}
+
+searchInput.addEventListener("input", () => {
+    applyProductFilters();
+});
+categoryFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+        selectedStockStatus = button.dataset.status;
+
+        applyProductFilters();
+    });
+});
+
+function displayProducts(productsToDisplay = products){
     productsTableBody.innerHTML = "";
 
-    products.forEach((product) => {
+    productsToDisplay.forEach((product) => {
         const row = productsTableBody.insertRow();
 
         row.insertCell().textContent = product.product_name;

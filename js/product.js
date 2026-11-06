@@ -95,12 +95,17 @@ function displayProducts(products){
     products.forEach(product => {
         const row = document.createElement("tr");
         const nameCell = document.createElement("td");
+        nameCell.classList.add("product-name");
+
         const priceCell = document.createElement("td");
         const actionCell = document.createElement("td");
+        actionCell.classList.add("action-cell");
 
         nameCell.textContent = `${product.product_name} (${product.category})`;
         priceCell.textContent = `₱${Number(product.price).toFixed(2)}`;
         const editBtn = document.createElement("button");
+        editBtn.classList.add("edit-btn");
+
         editBtn.textContent = "Edit";
         editBtn.dataset.id = product.id;
 
@@ -117,6 +122,8 @@ function displayProducts(products){
         });
 
         const deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("delete-btn");
+
         deleteBtn.textContent = "Delete";
         deleteBtn.dataset.id = product.id;
 
