@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,4 +16,124 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="products.css" />
+    <link rel="stylesheet" href="stock.css" />
   </head>
+
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>SARI-TRACKER</h2>
+        <ul>
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="stock.html">Stock Intelligence</a></li>
+          <li><a href="#">Reports</a></li>
+        </ul>
+      </aside>
+
+      <main>
+        <section class="stock-planner">
+          <div class="stock-header">
+            <div>
+              <h2>Restock Planner</h2>
+              <p>
+                Plan your inventory replenishment and identify which products
+                need attention before they run out.
+              </p>
+            </div>
+          </div>
+
+          <div class="restock-overview">
+            <div class="overview-card">
+              <div>
+                <p>Needs Restocking</p>
+                <h3 id="restockCount">0</h3>
+                <span>Products requiring attention</span>
+              </div>
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+
+            <div class="overview-card">
+              <div>
+                <p>Out of Stock</p>
+                <h3 id="outOfStockCount">0</h3>
+                <span>Products currently unavailable</span>
+              </div>
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="overview-card">
+              <div>
+                <p>Purchase Plan</p>
+                <h3 id="purchasePlanCount">0</h3>
+                <span>Products to be purchased</span>
+              </div>
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+          </div>
+
+          <div class="restock-recommendations">
+            <div class="section-header">
+              <div>
+                <h3>Restock Recommendations</h3>
+                <p>Products that may need replenishment soon.</p>
+              </div>
+            </div>
+
+            <div class="recommendation-list" id="recommendationList">
+              <div class="empty-recommendations">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <h4>No recommendations yet</h4>
+                <p>Products requiring replenishment will appear here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="purchase-plan">
+            <div class="section-header">
+              <div>
+                <h3>Purchase Plan</h3>
+                <p>Prepare and organize your upcoming restock purchases.</p>
+              </div>
+              <button type="button" id="clearPurchasePlan">Clear Plan</button>
+            </div>
+            <div class="purchase-plan-content" id="purchasePlanContent">
+              <div class="empty-purchase-plan">
+                <i class="fa-solid fa-cart-flatbed"></i>
+                <h4>Your purchase plan is empty</h4>
+                <p>
+                  Add products from your restock recommendations to start
+                  preparing your purchase list.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="slow-moving-products">
+            <div class="section-header">
+              <div>
+                <h3>Slow-Moving Products</h3>
+                <p>
+                  Products with low sales activity that may not need
+                  replenishment.
+                </p>
+              </div>
+            </div>
+
+            <div class="slow-moving-list" id="slowMovingList">
+              <div class="empty-slow-moving">
+                <i class="fa-solid fa-chart-line"></i>
+                <h4>No sales insights available</h4>
+                <p>
+                  Products with low sales activity will appear here once sales
+                  history is available.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/js/stock.js"></script>
+  </body>
+</html>

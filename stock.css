@@ -1,0 +1,226 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-primary: #163D2A;
+    --color-text: #111813;
+    --color-accent: #DDEBE0;
+    --color-background: #F7FAF7;
+       /* Typography */
+    --font-heading: "Manrope", sans-serif;
+    --font-body: "Inter", sans-serif;
+}
+
+/* RESTOCK PLANNER */
+
+.stock-planner{
+    display:flex;
+    flex-direction:column;
+    gap: 28px;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+.stock-header h2{
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+}
+
+.stock-header p{
+    font-family: var(--font-body);
+    font-size: 20px;
+    max-width: 600px;
+    color: var(--color-text);
+    color: #68756c;
+}
+
+.restock-overview{
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0, 1fr));
+    gap: 20px;
+}
+
+.overview-card{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-radius: 8px;
+    border: 2px solid #e6ece7;
+    box-shadow: 0 4px 12px rgba(22, 61, 42, 0.04);
+}
+
+.overview-card p{
+    color: #68756c;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.overview-card h3{
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.overview-card span {
+    color: #89938c;
+    font-size: 12px;
+}
+
+.overview-card > i{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    color: var(--color-primary);
+    background: var(--color-accent);
+    font-size: 20px;
+    border-radius: 50%;
+}
+
+.section-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.section-header h3{
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.section-header p{
+    color: #68756c;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* EMPTY STATES */
+.empty-recommendations,
+.empty-purchase-plan,
+.empty-slow-moving{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 38px 20px;
+    border: 2px dashed #e6ece7;
+    border-radius: 10px;
+    background: #fbfdfb;
+}
+
+.empty-recommendations i,
+.empty-purchase-plan i,
+.empty-slow-moving i {
+    font-size: 25px;
+    color: #8ba594;
+    margin-bottom: 14px;
+}
+
+.empty-recommendations h4,
+.empty-purchase-plan h4,
+.empty-slow-moving h4{
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.empty-recommendations p,
+.empty-purchase-plan p,
+.empty-slow-moving p{
+    color: #89938c;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 400px;
+}
+
+.recommendation-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-primary);
+}
+
+.recommendation-item:last-child {
+    border-bottom: none;
+}
+
+.recommendation-item h4{
+    color: var(--color-text);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.recommendation-item p {
+    color: #89938c;
+    font-size: 12px;
+}
+
+.recommendation-item > div:last-child{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.recommendation-item strong {
+    color: var(--color-primary);
+    font-size: 14px;
+    font-family: var(--font-heading);
+}
+
+.urgent-priority,
+.low-priority{
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 9px;
+    border-radius: 4px;
+}
+
+.urgent-priority {
+    color: #a43d35;
+    background: #fcebea;
+}
+
+.low-priority {
+    color: #8a671b;
+    background: #fff5d9;
+}
+
+#clearPurchasePlan:hover {
+    background: #f1f6f2;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .stock-planner {
+        padding: 20px;
+    }
+
+    .restock-overview {
+        grid-template-columns: 1fr;
+    }
+}
