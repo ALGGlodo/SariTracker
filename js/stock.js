@@ -7,6 +7,15 @@ const outOfStockCount = document.getElementById("outOfStockCount");
 const recommendationList = document.getElementById("recommendationList");
 
 let purchasePlan = JSON.parse(localStorage.getItem("purchasePlan")) || [];
+
+purchasePlan = purchasePlan.map((item) => ({
+    ...item,
+    purchaseQuantity: item.purchaseQuantity || 1,
+    purchased: item.purchased || false
+}));
+
+savePurchasePlan();
+
 const purchasePlanCount = document.getElementById("purchasePlanCount");
 const purchasePlanContent = document.getElementById("purchasePlanContent");
 const clearPurchasePlan = document.getElementById("clearPurchasePlan");
@@ -83,6 +92,10 @@ function displayRecommendations(){
     });
 }
 
+function savePurchasePlan(){
+    localStorage.setItem("purchasePlan", JSON.stringify(purchasePlan));
+}
+
 function displayPurchasePlan(){
     purchasePlanContent.innerHTML = "";
 
@@ -98,15 +111,63 @@ function displayPurchasePlan(){
         return;
     }
 
+    const purchasedCost = purchasePlan.filter((item) => {
+        return item.purchased;
+    }).length;
+
+    const progressSummary = document.createElement("div");
+    progressSummary.classList.add("purchase-progress");
+    
+    progressSummary.textContent = `${purchasedCost} of ${purchasePlan.length} items purchased`;
+    purchasePlanContent.appendChild(progressSummary);
+
+    const progressBar = document.createElement("div");
+    progressBar.classList.add("progress-bar");
+
+    const progressFill = document.createElement("div");
+    progressFill.classList.add("progress-fill");
+
+    const progressPercentage = (purchasedCost / purchasePlan.length * 100);
+
+    progressFill.style.width = `${progressPercentage}%`;
+
+    progressBar.append(progressFill);
+    purchasePlanContent.appendChild(progressBar);
+
     purchasePlan.forEach((item) => {
         const planItem = document.createElement("div");
         planItem.classList.add("purchase-plan-item");
 
+        if(item.purchased){
+            planItem.classList.add("purchased");
+        }
+
+        const productInfo = document.createElement("div");
+        productInfo.classList.add("product-info");
+
+        const productActions = document.createElement("div");
+        productActions.classList.add("product-actions");
+
         const productName = document.createElement("h4");
         productName.textContent = item.product_name;
+        
+        const purchasedCheckedBox = document.createElement("input");
+        purchasedCheckedBox.type = "checkbox";
+        purchasedCheckedBox.classList.add("purchased-checkbox");
+        purchasedCheckedBox.checked = item.purchased;
+        purchasedCheckedBox.dataset.id = item.id;
 
         const productStock = document.createElement("p");
         productStock.textContent = `${item.stock} units currently available`;
+
+        productInfo.append(productName, productStock);
+
+        const purchaseQuantity = document.createElement("input");
+        purchaseQuantity.type = "number";
+        purchaseQuantity.min = 1;
+        purchaseQuantity.value = item.purchaseQuantity || 1;
+        purchaseQuantity.classList.add("purchase-quantity");
+        purchaseQuantity.dataset.id = item.id;
 
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
@@ -114,7 +175,9 @@ function displayPurchasePlan(){
         removeBtn.dataset.id = item.id;
         removeBtn.classList.add("remove-plan-item");
 
-        planItem.append(productName, productStock, removeBtn);
+        productActions.append(purchasedCheckedBox, purchaseQuantity, removeBtn);
+
+        planItem.append(productInfo, productActions);
         purchasePlanContent.appendChild(planItem);
     });
 }
@@ -141,8 +204,12 @@ recommendationList.addEventListener("click", (e) => {
     purchasePlan.push({
         id: selectedProduct.id,
         product_name: selectedProduct.product_name,
-        stock: selectedProduct.stock
+        stock: selectedProduct.stock,
+        purchaseQuantity: 1,
+        purchased: false
     });
+
+    savePurchasePlan();
 
     displayPurchasePlan();
 });
@@ -151,19 +218,64 @@ purchasePlanContent.addEventListener("click", (e) => {
     const button = e.target.closest(".remove-plan-item");
 
     if (!button) return;
-
     const productId = Number(button.dataset.id);
-
     purchasePlan = purchasePlan.filter((item) => {
         return item.id !== productId;
     });
 
+    savePurchasePlan();
     displayPurchasePlan();
+});
+
+purchasePlanContent.addEventListener("change", (e) => {
+    if (!e.target.classList.contains("purchased-checkbox")) return;
+
+    const productId = Number(e.target.dataset.id);
+
+    purchasePlan = purchasePlan.map((item) => {
+        if (item.id === productId) {
+            return {
+                ...item,
+                purchased: e.target.checked
+            };
+        }
+
+        return item;
+    });
+    savePurchasePlan();
+    displayPurchasePlan();
+});
+
+purchasePlanContent.addEventListener("change", (e) =>{
+    if (!e.target.classList.contains("purchase-quantity")) return;
+
+    const productId = Number(e.target.dataset.id);
+    const newQuantity = Number(e.target.value);
+
+    if(!Number.isInteger(newQuantity) || newQuantity < 1){
+        newQuantity = 1;
+        e.target.value = 1;
+    }
+
+    purchasePlan = purchasePlan.map((item) => {
+        if(item.id === productId){
+            return{
+                ...item,
+                purchaseQuantity: newQuantity
+            };
+        }
+        return item;
+    });
+    savePurchasePlan();
+    console.log("Purchase plan updated:", purchasePlan);
 });
 
 clearPurchasePlan.addEventListener("click", () => {
     purchasePlan = [];
     displayPurchasePlan();
+    savePurchasePlan();
+
 });
 
 fetchStockProducts();
+displayPurchasePlan();

@@ -28,6 +28,7 @@ const openBalanceModalButtons = document.querySelectorAll(".open-balance-modal")
 const closeBalanceModal = document.getElementById("closeBalanceModal");
 const customerBalanceForm = document.getElementById("customerBalanceForm");
 const customerNameInput = document.getElementById("customerName");
+const productBalanceInput = document.getElementById("productBalance")
 const originalAmountInput = document.getElementById("originalAmount");
 const customerBalanceList = document.getElementById("customerBalanceList");
 const unpaidBalanceTableBody = document.getElementById("unpaidBalanceTableBody");
@@ -478,9 +479,12 @@ function displayCustomerBalances(){
         const status = getBalanceStatus(entry);
         const dataText = new Date(entry.dateTime).toLocaleString();
 
+        const productName = typeof entry.productName === "string" ? entry.productName : "Not Recorded";
+
         const row = unpaidBalanceTableBody.insertRow();
 
         row.insertCell().textContent = entry.customerName;
+        row.insertCell().textContent = productName;
         row.insertCell().textContent = dataText;
         row.insertCell().textContent = formatPeso(entry.originalAmount);
         row.insertCell().textContent = formatPeso(entry.remainingBalance);
@@ -498,7 +502,7 @@ function displayCustomerBalances(){
             card.classList.add("is-paid");
         }
 
-         const top = document.createElement("div");
+        const top = document.createElement("div");
         top.className = "balance-entry-top";
 
         const name = document.createElement("span");
@@ -514,6 +518,10 @@ function displayCustomerBalances(){
         const date = document.createElement("p");
         date.className = "balance-entry-date";
         date.textContent = dataText;
+
+        const product = document.createElement("p");
+        product.className = "balance-entry-product";
+        product.textContent = `Product: ${productName} `;
 
         const details = document.createElement("div");
         details.className = "balance-entry-details";
@@ -545,7 +553,7 @@ function displayCustomerBalances(){
         deleteButton.textContent = "Delete Entry";
         actions.appendChild(deleteButton);
 
-        card.append(top, date, details, actions);
+        card.append(top, date, product, details, actions);
         customerBalanceList.appendChild(card);
     });
 
@@ -614,9 +622,10 @@ function displayCustomerBalances(){
     event.preventDefault();
 
     const customerName = customerNameInput.value.trim();
+    const productBalance = productBalanceInput.value.trim();
     const originalAmount = Number(originalAmountInput.value);
 
-    if (!customerName || !Number.isFinite(originalAmount) || originalAmount <= 0) {
+    if (!customerName || !productBalance || !Number.isFinite(originalAmount) || originalAmount <= 0) {
         alert("Enter a customer name and a valid amount.");
         return;
     }
@@ -624,6 +633,7 @@ function displayCustomerBalances(){
     customerBalances.unshift({
         id: Date.now(),
         customerName,
+        productName: productBalance,
         dateTime: new Date().toISOString(),
         originalAmount,
         remainingBalance: originalAmount,
