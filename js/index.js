@@ -39,10 +39,8 @@ const paymentsReceivedToday = document.getElementById("paymentsReceivedToday");
 const searchInput = document.getElementById("searchInput");
 const categoryFilters = document.querySelectorAll(".category-filter");
 
-
 let selectedStockStatus = "all";
-//
-
+// Set the default selected stock status
 let sales = JSON.parse(localStorage.getItem("stockMateSales")) || [];
 sales = sales.map((sale, index) => ({
     ...sale,

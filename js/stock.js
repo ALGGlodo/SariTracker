@@ -38,10 +38,15 @@ async function fetchStockProducts(){
 
 function updateRestockOverview(){
     const needsRestocking = products.filter((product) => {
-        return (Number(product.stock) === 0);
+        return Number(product.stock) >= 1 && Number(product.stock) <= 5;
     });
+
+    const outOfStock = products.filter((product) => {
+        return  Number(product.stock) === 0;
+    })
+
     restockCount.textContent = needsRestocking.length;
-    outOfStockCount.textContent = products.length;
+    outOfStockCount.textContent = outOfStock.length;
 }
 
 function displayRecommendations(){
