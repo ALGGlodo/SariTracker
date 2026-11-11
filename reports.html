@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports Page</title>
+    <script
+      src="https://kit.fontawesome.com/56c8bde467.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="reports.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>SARI-TRACKER</h2>
+
+        <ul>
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="stock.html">Stock Intelligence</a></li>
+          <li><a href="reports.html">Reports</a></li>
+        </ul>
+      </aside>
+      <main>
+        <section class="reports-section">
+          <div class="reports-header">
+            <h2>Reports Intelligence</h2>
+            <p>Review your store's performance and daily activities.</p>
+          </div>
+          <div class="reports-filter">
+            <div class="reports-filter-info">
+              <h3>Daily Business Reports</h3>
+              <p>Filter reports by date to view specific information.</p>
+            </div>
+
+            <div class="custom-date-wrapper">
+              <!-- Visible button that looks clean in your UI -->
+              <button type="button" id="calendar-btn">Select Date</button>
+
+              <!-- Hidden native date input -->
+              <input
+                type="date"
+                id="hidden-date-input"
+                class="visually-hidden"
+              />
+            </div>
+          </div>
+
+          <div class="daily-sales">
+            <div class="daily-sales-info">
+                <h3 id="businessDay">Business Day | November 11, 2026</h3>
+                <p>View your daily sales and performance.</p>
+            </div>
+            <div class="transactions-grid">
+                <div class="transaction-infos">
+                    <i class="fa-solid fa-peso-sign" style="color: rgb(99, 230, 190);"></i>
+                    <p>Total Sales</p>
+                    <h3 id="totalSales">₱ 0.00</h3>
+                    <p>Today's recorded sales</p>
+                </div>
+
+                <div class="transaction-infos">
+                    <i class="fa-solid fa-money-bill-transfer" style="color: rgb(99, 230, 190);"></i>
+                    <p>Transactions</p>
+                    <h3 id="totalProductsSold">0</h3>
+                    <p>Total units sold</p>
+                </div>
+
+                <div class="transaction-infos">
+                    <i class="fa-solid fa-money-bill-wave" style="color: rgb(99, 230, 190);"></i>
+                    <p>Unpaid Balances</p>
+                    <h3 id="totalUnpaid">0</h3>
+                    <p>Total units sold</p>
+                </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

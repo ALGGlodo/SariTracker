@@ -1,0 +1,115 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-primary: #163D2A;
+    --color-text: #111813;
+    --color-accent: #DDEBE0;
+    --color-background: #F7FAF7;
+       /* Typography */
+    --font-heading: "Manrope", sans-serif;
+    --font-body: "Inter", sans-serif;
+}
+
+main{
+    width: 100%;
+
+}
+
+.reports-section{
+    padding: 2rem 2rem;
+}
+
+.reports-header{
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.reports-header h2{
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.reports-header p{
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.reports-filter h3{
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-accent);
+}
+
+.reports-filter p{
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+
+.reports-filter{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.5;
+    background-color: var(--color-primary);
+    padding: 2rem;
+    border-radius: 1rem;
+
+}
+
+.custom-date-wrapper {
+    position: relative;
+    display: inline-block;
+}
+  /* Hide the default input box while keeping it functional */
+.visually-hidden {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+
+  .custom-date-wrapper button{
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+    border: none;
+    padding: 1rem;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+.daily-sales-info{
+    margin: 1rem 0;
+    padding: 0.2rem;
+    border-bottom: 2px solid var(--color-accent);
+}
+
+.daily-sales-info h3{
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-primary);
+}
+
+.daily-sales-info p{
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.transactions-grid{
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}   
+
