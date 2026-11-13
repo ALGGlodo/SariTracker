@@ -56,34 +56,62 @@
 
           <div class="daily-sales">
             <div class="daily-sales-info">
-                <h3 id="businessDay">Business Day | November 11, 2026</h3>
-                <p>View your daily sales and performance.</p>
+              <h3 id="businessDay">Business Day | November 12, 2026</h3>
+              <p>View your daily sales and performance.</p>
             </div>
             <div class="transactions-grid">
-                <div class="transaction-infos">
-                    <i class="fa-solid fa-peso-sign" style="color: rgb(99, 230, 190);"></i>
-                    <p>Total Sales</p>
-                    <h3 id="totalSales">₱ 0.00</h3>
-                    <p>Today's recorded sales</p>
-                </div>
+              <div class="transaction-infos">
+                <i class="fa-solid fa-peso-sign"></i>
+                <p>Total Sales</p>
+                <h3 id="totalSales">₱ 0.00</h3>
+                <p>Total recorded sales</p>
+              </div>
 
-                <div class="transaction-infos">
-                    <i class="fa-solid fa-money-bill-transfer" style="color: rgb(99, 230, 190);"></i>
-                    <p>Transactions</p>
-                    <h3 id="totalProductsSold">0</h3>
-                    <p>Total units sold</p>
-                </div>
+              <div class="transaction-infos">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+                <p>Transactions</p>
+                <h3 id="totalTransactions">0</h3>
+                <p>Total units sold</p>
+              </div>
 
-                <div class="transaction-infos">
-                    <i class="fa-solid fa-money-bill-wave" style="color: rgb(99, 230, 190);"></i>
-                    <p>Unpaid Balances</p>
-                    <h3 id="totalUnpaid">0</h3>
-                    <p>Total units sold</p>
-                </div>
+              <div class="transaction-infos">
+                <i class="fa-solid fa-table-list"></i>
+                <p>Unpaid Balances</p>
+                <h3 id="totalUnpaidBalance">₱ 0.00</h3>
+                <p>Total unpaid balances</p>
+              </div>
             </div>
+          </div>
+        </section>
+
+        <section class="sales-transactions">
+          <h2>Sales Transactions</h2>
+          <p>View individual sales for your selected date.</p>
+          <div class="table-container">
+            <table class="sales-table">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                   <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="salesTableBody">
+                <!-- Sales data will be dynamically inserted here -->
+              </tbody>
+              <tfoot>
+                  <tr>
+                      <td colspan="4">Total Sales</td>
+                      <td id="tableTotal">₱0.00</td>
+                  </tr>
+              </tfoot>
+            </table>
           </div>
         </section>
       </main>
     </div>
+    <script src="/js/reports.js"></script>
   </body>
 </html>

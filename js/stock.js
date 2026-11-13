@@ -284,3 +284,4 @@ clearPurchasePlan.addEventListener("click", () => {
 
 fetchStockProducts();
 displayPurchasePlan();
+

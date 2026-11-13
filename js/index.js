@@ -54,9 +54,19 @@ function displaySales(){
 
     let total = 0;
 
-    sales.forEach((sale) => {
+    const todaySales = sales.filter((sale) => {
+        const saleDate = new Date(sale.dateTime);
+        const today = new Date();
+
+        return (
+            saleDate.getDate() === today.getDate() &&
+            saleDate.getMonth() === today.getMonth() &&
+            saleDate.getFullYear() === today.getFullYear()
+        );
+    });
+
+    todaySales.forEach((sale) => {
         const row = salesTableBody.insertRow(0);
-        
 
     row.insertCell().textContent = sale.dateTime;
     row.insertCell().textContent = sale.productName;
@@ -84,7 +94,6 @@ function displaySales(){
     total += Number(sale.subtotal || 0);
     });
     salesTotal.textContent = `₱${total.toFixed(2)}`;
-    
 
     const today = new Date();
 

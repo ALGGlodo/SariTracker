@@ -7,6 +7,7 @@
 :root {
     --color-primary: #163D2A;
     --color-text: #111813;
+    --color-subtext: #4B4B4B;
     --color-accent: #DDEBE0;
     --color-background: #F7FAF7;
        /* Typography */
@@ -14,9 +15,16 @@
     --font-body: "Inter", sans-serif;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+}
+
+p, span, a, li {
+    font-family: var(--font-body);
+}
+
 main{
     width: 100%;
-
 }
 
 .reports-section{
@@ -24,7 +32,7 @@ main{
 }
 
 .reports-header{
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     line-height: 1.5;
 }
 
@@ -42,14 +50,14 @@ main{
 
 .reports-filter h3{
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.4em;
     color: var(--color-accent);
 }
 
 .reports-filter p{
     font-family: var(--font-body);
     font-size: 1rem;
-    color: var(--color-accent);
+    color: #68756c;
     margin-bottom: 1rem;
 }
 
@@ -109,7 +117,100 @@ main{
 .transactions-grid{
     padding: 0 1rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 350px));
+    justify-content: center;
     gap: 1rem;
 }   
 
+.transaction-infos{
+    padding: 1rem;
+    text-align: left;
+}
+
+.transaction-infos i{
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+    background-color: var(--color-primary);
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.transaction-infos h3{
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.transaction-infos p:last-child{
+    font-size: 1rem;
+    color: var(--color-subtext);
+    line-height: 1.5;
+}
+
+.sales-transactions{
+    padding: 0 2rem;
+}
+
+.sales-transactions h2{
+    color: var(--color-primary);
+}
+
+.sales-transactions p{
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.table-container{
+    width: 100%;
+    overflow-x: auto;
+    background-color: var(--color-background);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(22, 61, 42, 0.04);
+}
+
+.sales-table{
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+}
+
+.sales-table th{
+    background: var(--color-primary);
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    padding: 1rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}   
+
+.sales-table td{
+    font-family: var(--font-body);
+    padding: 1rem;
+    border: 1px solid var(--color-accent);
+    color: #374151;
+}
+
+.sales-table tbody tr:hover {
+    background: var(--color-accent);
+}
+
+.sales-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 900px) {
+    .transactions-grid {
+        grid-template-columns: repeat(2, minmax(0, 350px));
+    }
+}
+
+@media (max-width: 600px) {
+    .transactions-grid {
+        grid-template-columns: minmax(0, 350px);
+    }
+}
