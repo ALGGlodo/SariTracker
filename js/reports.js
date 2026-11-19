@@ -84,3 +84,18 @@ businessDate.textContent = `Business Day | ${today.toLocaleDateString("en-US", {
   year: "numeric",
 })}`;
 
+let productSummary = {};
+
+salesReport.forEach((report) => {
+  if (Object.hasOwn(productSummary, report.productName)) {
+    productSummary[report.productName].totalQuantity += Number(report.quantity || 0);
+    productSummary[report.productName].totalRevenue += Number(report.subtotal || 0);
+  } else {
+    productSummary[report.productName] = {
+      totalQuantity: Number(report.quantity || 0),
+      totalRevenue: Number(report.subtotal || 0),
+    };
+  }
+});
+console.log(productSummary);
+
