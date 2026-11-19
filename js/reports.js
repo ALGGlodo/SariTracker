@@ -97,5 +97,34 @@ salesReport.forEach((report) => {
     };
   }
 });
+
+const bestSellingProducts = Object.entries(productSummary).sort((a, b) => {
+  return b[1].totalQuantity - a[1].totalQuantity || b[1].totalRevenue - a[1].totalRevenue;
+});
+
 console.log(productSummary);
+
+const bestSellingTableBody = document.getElementById("bestSellingTableBody");
+
+bestSellingTableBody.innerHTML = "";
+
+if(bestSellingProducts.length === 0){
+  bestSellingTableBody.innerHTML = `
+    <tr>
+      <td colspan="4" class="empty-state">No sales data available yet.</td>
+    </tr>
+  `;
+}else{
+
+bestSellingProducts.forEach((product,index) => {
+  bestSellingTableBody.innerHTML += `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${product[0]}</td>
+      <td>${product[1].totalQuantity}</td>
+      <td>₱${product[1].totalRevenue.toFixed(2)}</td>
+    </tr>
+  `;
+});
+}
 
