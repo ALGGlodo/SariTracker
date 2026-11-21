@@ -128,3 +128,48 @@ bestSellingProducts.forEach((product,index) => {
 });
 }
 
+const bestSellingCanvas = document.getElementById("bestSellingChart");
+
+new Chart(bestSellingCanvas, {
+  type: "bar",
+  data: {
+    labels: bestSellingProducts.map(product => product[0]),
+    datasets: [{
+      label: "Quantity Sold",
+      data: bestSellingProducts.map(product => product[1].totalQuantity),
+      backgroundColor: "#163D2A",
+      borderColor: "#163D2A", 
+      borderWidth: 2,
+      categoryPercentage: 0.8,
+      barPercentage: 0.8,
+      borderRadius: 5
+    }]
+  },
+  options:{
+    responsive: true,
+    plugins: {
+      title:{
+        display: true,
+        text: "Best Selling Products",
+        font: {
+          size: 18
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Products"
+        }
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Quantity Sold"
+        }
+      }
+    }
+  }
+});
