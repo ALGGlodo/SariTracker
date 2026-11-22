@@ -129,6 +129,7 @@ bestSellingProducts.forEach((product,index) => {
 }
 
 const bestSellingCanvas = document.getElementById("bestSellingChart");
+const productRevenueCanvas = document.getElementById("productRevenueChart");
 
 new Chart(bestSellingCanvas, {
   type: "bar",
@@ -168,6 +169,63 @@ new Chart(bestSellingCanvas, {
         title: {
           display: true,
           text: "Quantity Sold"
+        }
+      }
+    }
+  }
+});
+
+new Chart(productRevenueCanvas, {
+  type: "bar",
+  data:{
+    labels: bestSellingProducts.map(product => product[0]),
+    datasets: [{
+      label: "Revenue",
+      data: bestSellingProducts.map(product => product[1].totalRevenue),
+      backgroundColor: "#163D2A",
+      borderColor: "#163D2A", 
+      borderWidth: 2,
+      categoryPercentage: 0.8,
+      barPercentage: 0.8,
+      borderRadius: 5
+    }]
+  },
+  options:{
+    responsive: true,
+    plugins: {
+      title:{
+        display: true,
+        text: "Product Revenue",
+        font: {
+          size: 18
+        }
+      },
+      tooltip:{
+        callbacks:{
+          label: function(context){
+            let value = context.raw;
+            return "Revenue: ₱" + value.toFixed(2);
+          }
+        }
+      }
+    },
+    scales:{
+      x: {
+        title: {
+          display: true,
+          text: "Products"
+        }
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Revenue"
+        },
+        ticks:{
+          callbacks: function(value){
+            return "₱" + value;
+          } 
         }
       }
     }
