@@ -4,6 +4,9 @@ const totalSales = document.getElementById("totalSales");
 const salesTableBody = document.getElementById("salesTableBody");
 const tableTotal = document.getElementById("tableTotal");
 const salesReport = JSON.parse(localStorage.getItem("stockMateSales")) || [];
+const totalTransactions = document.getElementById("totalTransactions");
+
+
 const todaysSales = salesReport.filter((report) => {
   const saleDate = new Date(report.dateTime);
   const today = new Date();
@@ -24,17 +27,18 @@ selectDateBtn.addEventListener("click", () => {
   hiddenCalendar.showPicker();
 });
 
-hiddenCalendar.addEventListener("change", () => {
-  const selectedDate = new Date(hiddenCalendar.value);
+// ADD THE FUNCTION HERE
+function displaySalesForDate(selectedDate) {
+    // Sales filtering and display logic
     const selectedDateReport = salesReport.filter((report) => {
-        const reportDate = new Date(report.dateTime);
+      const reportDate = new Date(report.dateTime);
         return (
-        reportDate.getDate() === selectedDate.getDate() &&
-        reportDate.getMonth() === selectedDate.getMonth() &&
-        reportDate.getFullYear() === selectedDate.getFullYear()
-        );
-    });
-    const todaysTotal = selectedDateReport.reduce((total, report) => {
+          reportDate.getDate() === selectedDate.getDate() &&
+          reportDate.getMonth() === selectedDate.getMonth() &&
+          reportDate.getFullYear() === selectedDate.getFullYear()
+      );
+  });
+      const todaysTotal = selectedDateReport.reduce((total, report) => {
         return total + Number(report.subtotal || 0);
     }, 0);
     totalSales.textContent = `₱${todaysTotal.toFixed(2)}`;
@@ -62,10 +66,14 @@ hiddenCalendar.addEventListener("change", () => {
         `;
         salesTableBody.appendChild(row);
     });
-    }
-});
+  }
+}
 
-const totalTransactions = document.getElementById("totalTransactions");
+displaySalesForDate(new Date());
+hiddenCalendar.addEventListener("change", () => {
+  const selectedDate = new Date(hiddenCalendar.value);
+  displaySalesForDate(selectedDate);
+});
 
 const unpaidBalance =
   JSON.parse(localStorage.getItem("stockMateBalances")) || [];
