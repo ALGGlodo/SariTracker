@@ -41,12 +41,34 @@ const categoryFilters = document.querySelectorAll(".category-filter");
 
 let selectedStockStatus = "all";
 // Set the default selected stock status
-let sales = JSON.parse(localStorage.getItem("stockMateSales")) || [];
-sales = sales.map((sale, index) => ({
-    ...sale,
-    id: sale.id ?? Date.now() + index
-}));
-localStorage.setItem("stockMateSales", JSON.stringify(sales));
+let sales = [];
+
+const SALES_API_URL = "http://localhost:3000/api/sales";
+
+async function fetchDashboardSales(){
+    try{
+        const workspaceId = await getWorkspaceId();
+
+        const response = await fetch(`${SALES_API_URL}?workspaceId=${workspaceId}`);
+
+        if(!response.ok){
+            throw new Error("Failed to fetch sales");
+        }
+        const result = await response.json();
+
+        sales = result.map(sale => ({
+            id: Number(sale.id),
+            dateTime: new Date(sale.date_time).toLocaleString(),
+            productName: sale.product_name,
+            orderPrice: Number(sale.order_price),
+            quantity: Number(sale.quantity),
+            subtotal: Number(sale.subtotal)
+        }));
+        displaySales();
+    } catch (error) {
+        console.error("Error fetching dashboard sales:", error);
+    }
+}
 
 /* DISPLAY SAVED SALES */
 function displaySales(){
@@ -124,14 +146,16 @@ function calculateSubtotal() {
 productPrice.addEventListener("input", calculateSubtotal);
 productQuantity.addEventListener("input", calculateSubtotal);
 
-salesForm.addEventListener("submit", (e) => {
+let editingSaleId = null;
+
+salesForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const productName = productNameInput.value.trim();
     const orderPrice = Number(productPrice.value);
     const quantity = Number(productQuantity.value);
 
-        if (
+    if (
         !productName ||
         !Number.isFinite(orderPrice) ||
         orderPrice <= 0 ||
@@ -142,31 +166,64 @@ salesForm.addEventListener("submit", (e) => {
     }
 
     const subtotal = orderPrice * quantity;
-    const dateTime = new Date().toLocaleString();
+
+    // Keep the original date when editing a sale
+    const existingSale = sales.find(
+        sale => sale.id === editingSaleId
+    );
 
     const sale = {
-        id: Date.now(),
-        dateTime,
+        id: editingSaleId ?? Date.now(),
+        dateTime: existingSale
+            ? existingSale.dateTime
+            : new Date().toLocaleString(),
         productName,
         orderPrice,
         quantity,
-        subtotal,
+        subtotal
     };
 
-    // Add the newest sale to the beginning of the array
-    sales.unshift(sale);
+    try {
+        const workspaceId = await getWorkspaceId();
 
-    // Save all sales in the browser
-    localStorage.setItem("stockMateSales", JSON.stringify(sales));
+        const isEditing = editingSaleId !== null;
 
-    // Refresh the table and totals
-    displaySales();
+        const response = await fetch(
+            isEditing
+                ? `${SALES_API_URL}/${editingSaleId}`
+                : SALES_API_URL,
+            {
+                method: isEditing ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...sale,
+                    workspace_id: workspaceId
+                })
+            }
+        );
 
-    // Reset the form and close the modal
-    salesForm.reset();
-    productSubtotal.value = "";
-    saleModal.close();
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Failed to save sale.");
+        }
+
+        await fetchDashboardSales();
+
+        editingSaleId = null;
+
+        salesForm.reset();
+        productSubtotal.value = "";
+        saleModal.close();
+
+    } catch (error) {
+        console.log("Error saving sale:", error);
+        alert("Failed to save sale. Please try again.");
+    }
 });
+
 
 /* OPEN MODAL */
 openSaleButtons.forEach((button) => {
@@ -187,20 +244,22 @@ cancelButton.addEventListener("click", () => {
 
 
 /* DISPLAY SAVED SALES WHEN PAGE LOADS */
-displaySales();
+fetchDashboardSales();
 
-salesTableBody.addEventListener("click", (e) => {
+
+salesTableBody.addEventListener("click", async (e) => {
     const button = e.target.closest("button");
 
-    if(!button) return;
+    if (!button) return;
 
     const saleId = Number(button.dataset.id);
+
     console.log("Clicked button:", button.className, "Sale ID:", saleId);
 
-    if(button.classList.contains("edit-sale")){
+    if (button.classList.contains("edit-sale")) {
         const sale = sales.find((item) => item.id === saleId);
 
-        if(!sale) return
+        if (!sale) return;
 
         productNameInput.value = sale.productName;
         productPrice.value = sale.orderPrice;
@@ -213,16 +272,35 @@ salesTableBody.addEventListener("click", (e) => {
         saleModal.showModal();
     }
 
-    if(button.classList.contains("delete-sale")){
+    if (button.classList.contains("delete-sale")) {
         const confirmed = confirm("Are you sure you want to delete this sale?");
 
-        if(!confirmed) return;
+        if (!confirmed) return;
 
-        sales = sales.filter(sale => sale.id !== saleId);
+        try {
+            const workspaceId = await getWorkspaceId();
 
-        localStorage.setItem("stockMatesSales", JSON.stringify(sales));
+            const response = await fetch(
+                `${SALES_API_URL}/${saleId}?workspaceId=${workspaceId}`,
+                {
+                    method: "DELETE"
+                }
+            );
 
-        displaySales();
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Failed to delete sale.");
+            }
+
+            await fetchDashboardSales();
+
+            console.log("Sale deleted successfully:", result);
+
+        } catch (error) {
+            console.error("Error deleting sale:", error);
+            alert("Failed to delete sale. Please try again.");
+        }
     }
 });
 
@@ -242,7 +320,8 @@ const PRODUCTS_API_URL = "http://localhost:3000/api/products";
 
 async function fetchDashboardProducts(){
     try{
-        const response = await fetch(PRODUCTS_API_URL);
+       const workspaceId = await getWorkspaceId();
+       const response = await fetch(`${PRODUCTS_API_URL}?workspaceId=${workspaceId}`);
 
         if(!response.ok){
             throw new Error("Failed to retrieve products from the server.");
@@ -261,7 +340,7 @@ function applyProductFilters() {
     const filteredProducts = products.filter((product) => {
         const matchesSearch = product.product_name.toLowerCase().includes(searchValue) ||
         product.category.toLowerCase().includes(searchValue);
-    
+
     const stock = Number(product.stock);
 
     const matchedStatus = selectedStockStatus === "all" ||
@@ -353,6 +432,7 @@ openProductModalButtons.forEach(button => {
     });
 });
 
+
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -361,7 +441,14 @@ productForm.addEventListener("submit", async (e) => {
     const productPrice = Number(newProductPrice.value);
     const productStock = Number(newProductStock.value);
 
-    if(!productName || !productCategory || !Number.isFinite(productPrice) || productPrice <= 0 || !Number.isInteger(productStock) || productStock < 0){
+    if (
+        !productName ||
+        !productCategory ||
+        !Number.isFinite(productPrice) ||
+        productPrice <= 0 ||
+        !Number.isInteger(productStock) ||
+        productStock < 0
+    ) {
         return;
     }
 
@@ -370,11 +457,14 @@ productForm.addEventListener("submit", async (e) => {
         category: productCategory,
         price: productPrice,
         stock: productStock
-    }
+    };
 
-    try{
+    try {
+        const workspaceId = await getWorkspaceId();
 
-        const url = editingProductId !== null ? `${PRODUCTS_API_URL}/${editingProductId}` : PRODUCTS_API_URL;
+        const url = editingProductId !== null
+            ? `${PRODUCTS_API_URL}/${editingProductId}`
+            : PRODUCTS_API_URL;
 
         const method = editingProductId !== null ? "PUT" : "POST";
 
@@ -383,14 +473,18 @@ productForm.addEventListener("submit", async (e) => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newProduct)
+            body: JSON.stringify({
+                ...newProduct,
+                workspace_id: workspaceId
+            })
         });
 
         const result = await response.json();
 
-        if(!response.ok){
+        if (!response.ok) {
             throw new Error(result.error || "Failed to save product.");
         }
+
         console.log("Product saved successfully:", result);
 
         productForm.reset();
@@ -398,10 +492,13 @@ productForm.addEventListener("submit", async (e) => {
         productModal.close();
 
         await fetchDashboardProducts();
-    }catch(error){
-        console.error("Error adding product:", error);
-        }
-    });
+
+    } catch (error) {
+        console.error("Error saving product:", error);
+        alert("Failed to save product. Please try again.");
+    }
+});
+
 
 productsTableBody.addEventListener("click", async (e) => {
     const button = e.target.closest("button");
@@ -432,10 +529,10 @@ productsTableBody.addEventListener("click", async (e) => {
         const confirmed = confirm("Are you sure you want to delete this product?");
 
         if (!confirmed) return;
-        
+
         try{
             const response = await fetch(`${PRODUCTS_API_URL}/${productId}`, {
-               method: "DELETE" 
+               method: "DELETE"
             });
 
             const result = await response.json();
@@ -455,21 +552,46 @@ productsTableBody.addEventListener("click", async (e) => {
 fetchDashboardProducts();
 
 /* CUSTOMER BALANCES SECTION */
-let customerBalances = JSON.parse(localStorage.getItem("stockMateBalances")) || [];
 
-customerBalances = customerBalances.map((entry, index) => ({
-    ...entry,
-    id: entry.id ??  Date.now() + index,
-    payments: entry.payments || [],
-    remainingBalance: Number(entry.remainingBalance ?? entry.originalAmount)
-}));
+/* CUSTOMER BALANCES SECTION */
+let customerBalances = [];
 
-function saveCustomerBalances(){
-    localStorage.setItem(
-        "stockMateBalances",
-        JSON.stringify(customerBalances)
-    );
+const BALANCES_API_URL = "http://localhost:3000/api/balances";
+
+async function fetchCustomerBalances() {
+    try {
+        const workspaceId = await getWorkspaceId();
+
+        const response = await fetch(
+            `${BALANCES_API_URL}?workspaceId=${workspaceId}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to retrieve customer balances.");
+        }
+
+        const result = await response.json();
+
+        customerBalances = result.map(entry => ({
+            id: Number(entry.id),
+            customerName: entry.customer_name,
+            productName: entry.product_name,
+            dateTime: entry.date_time,
+            originalAmount: Number(entry.original_amount),
+            remainingBalance: Number(entry.remaining_balance),
+            payments: (entry.payments || []).map(payment => ({
+                amount: Number(payment.amount),
+                dateTime: payment.dateTime
+            }))
+        }));
+
+        displayCustomerBalances();
+
+    } catch (error) {
+        console.error("Error fetching customer balances:", error);
+    }
 }
+
 function formatPeso(amount){
     return `${Number(amount).toFixed(2)}`;
 }
@@ -610,8 +732,7 @@ function displayCustomerBalances(){
     paymentsReceivedToday.textContent = formatPeso(paymentsToday);
 }
 
-    saveCustomerBalances();
-    displayCustomerBalances();
+    fetchCustomerBalances();
 
     // Open and close the ledger
     openBalanceModalButtons.forEach(button => {
@@ -624,8 +745,9 @@ function displayCustomerBalances(){
     customerBalanceDialog.close();
     });
 
-    // Add a new credit entry
-    customerBalanceForm.addEventListener("submit", (event) => {
+
+// Add a new credit entry
+customerBalanceForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const customerName = customerNameInput.value.trim();
@@ -637,23 +759,43 @@ function displayCustomerBalances(){
         return;
     }
 
-    customerBalances.unshift({
-        id: Date.now(),
-        customerName,
-        productName: productBalance,
-        dateTime: new Date().toISOString(),
-        originalAmount,
-        remainingBalance: originalAmount,
-        payments: []
-    });
+    try {
+        const workspaceId = await getWorkspaceId();
 
-    saveCustomerBalances();
-    displayCustomerBalances();
-    customerBalanceForm.reset();
+        const newBalance = {
+            id: Date.now(),
+            customerName,
+            productName: productBalance,
+            dateTime: new Date().toISOString(),
+            originalAmount,
+            workspace_id: workspaceId
+        };
+
+        const response = await fetch(BALANCES_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newBalance)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Failed to add customer balance.");
+        }
+
+        await fetchCustomerBalances();
+        customerBalanceForm.reset();
+
+    } catch (error) {
+        console.error("Error adding customer balance:", error);
+        alert("Failed to add customer balance. Please try again.");
+    }
 });
 
 // Record partial or full payments; handle ledger buttons
-    customerBalanceList.addEventListener("click", (event) => {
+customerBalanceList.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
 
     if (!button) return;
@@ -663,6 +805,7 @@ function displayCustomerBalances(){
 
     if (!entry) return;
 
+    // RECORD PAYMENT
     if (button.classList.contains("record-payment-btn")) {
         const answer = prompt(
             `Remaining balance: ${formatPeso(entry.remainingBalance)}\nEnter payment amount:`
@@ -682,30 +825,65 @@ function displayCustomerBalances(){
             return;
         }
 
-        entry.remainingBalance = Math.max(
-            0,
-            Math.round((entry.remainingBalance - amount) * 100) / 100
-        );
+        try {
+            const workspaceId = await getWorkspaceId();
 
-        entry.payments.push({
-            amount,
-            dateTime: new Date().toISOString()
-        });
+            const response = await fetch(
+                `${BALANCES_API_URL}/${entryId}/payments`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        amount,
+                        dateTime: new Date().toISOString(),
+                        workspace_id: workspaceId
+                    })
+                }
+            );
 
-        saveCustomerBalances();
-        displayCustomerBalances();
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Failed to record payment.");
+            }
+
+            await fetchCustomerBalances();
+
+        } catch (error) {
+            console.error("Error recording payment:", error);
+            alert("Failed to record payment. Please try again.");
+        }
     }
 
+    // DELETE BALANCE
     if (button.classList.contains("delete-balance-btn")) {
         if (!confirm(`Delete ${entry.customerName}'s balance entry and its payment history?`)) {
             return;
         }
 
-        customerBalances = customerBalances.filter(
-            (item) => item.id !== entryId
-        );
+        try {
+            const workspaceId = await getWorkspaceId();
 
-        saveCustomerBalances();
-        displayCustomerBalances();
+            const response = await fetch(
+                `${BALANCES_API_URL}/${entryId}?workspaceId=${workspaceId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Failed to delete customer balance.");
+            }
+
+            await fetchCustomerBalances();
+
+        } catch (error) {
+            console.error("Error deleting customer balance:", error);
+            alert("Failed to delete customer balance. Please try again.");
+        }
     }
 });

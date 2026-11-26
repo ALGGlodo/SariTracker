@@ -1,15 +1,10 @@
 const dotenv = require("dotenv");
 const path = require("path");
-const {Pool} = require("pg");
+const { Pool } = require("pg");
 
-require("dotenv").config();
-
-const result = dotenv.config({
+dotenv.config({
     path: path.resolve(__dirname, "../.env")
 });
-
-console.log("Environment file loaded:", !result.error);
-console.log("Password detected:", Boolean(process.env.DB_PASSWORD));
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -18,4 +13,5 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT
 });
+
 module.exports = pool;

@@ -13,14 +13,18 @@ const productPriceInput = document.getElementById('productPrice');
 
 async function fetchProducts() {
     try{
-        const response = await fetch(API_URL);
+        const workspaceId = await getWorkspaceId();
+
+        const response = await fetch(`${API_URL}?workspaceId=${workspaceId}`);
+
         if(!response.ok){
             throw new Error("Failed to retrieve products.");
         }
-        
+
         allProducts = await response.json();
-        
+
         displayProducts(allProducts);
+        console.log("Products loaded:", allProducts.length);
 
     }catch(error){
          console.error("Error fetching products:", error);
@@ -30,7 +34,7 @@ fetchProducts();
 
 function applyFilters(){
     const searchValue = searchProduct.value.toLowerCase().trim();
-    const filteredProducts = allProducts.filter(product => 
+    const filteredProducts = allProducts.filter(product =>
         (product.product_name.toLowerCase().includes(searchValue) ||
         product.category.toLowerCase().includes(searchValue)) &&
         (selectedCategory === "All" || (product.category === selectedCategory))
@@ -44,9 +48,11 @@ addProductForm.addEventListener("submit", async (event) => {
     const newProduct = {
         product_name: productNameInput.value.trim(),
         category: productCategoryInput.value.trim(),
-        price: Number(productPriceInput.value)
+        price: Number(productPriceInput.value),
+        stock: 0
     };
     try{
+        const workspaceId = await getWorkspaceId();
         const url = editingProductId ? `${API_URL}/${editingProductId}` : API_URL;
 
         const method = editingProductId ? "PUT" : "POST";
@@ -56,15 +62,15 @@ addProductForm.addEventListener("submit", async (event) => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newProduct)
+            body: JSON.stringify({ ...newProduct, workspace_id: workspaceId })
         })
 
         const result = await response.json();
         if(!response.ok){
-            throw new Error(result.message || "Failed to add product.");
+           throw new Error(result.error || result.message || "Failed to save product.");
         }
         console.log("Product saved:", result);
-        
+
         addProductForm.reset();
         editingProductId = null;
 
@@ -73,8 +79,6 @@ addProductForm.addEventListener("submit", async (event) => {
         console.error("Error adding product:", error);
     }
 });
-    
-
 
 function displayProducts(products){
     productsTable.replaceChildren(); // Clear existing rows
@@ -112,13 +116,20 @@ function displayProducts(products){
         actionCell.appendChild(editBtn);
 
         editBtn.addEventListener("click", () => {
+            console.log("Edit button clicked");
             const selectedProduct = products.find(item => item.id === product.id)
-
+            console.log("Selected product:", selectedProduct);
             editingProductId = selectedProduct.id;
 
             productNameInput.value = selectedProduct.product_name;
             productCategoryInput.value = selectedProduct.category;
             productPriceInput.value = selectedProduct.price;
+
+            console.log("Form values:", {
+    name: productNameInput.value,
+    category: productCategoryInput.value,
+    price: productPriceInput.value
+});
         });
 
         const deleteBtn = document.createElement("button");
@@ -137,7 +148,8 @@ function displayProducts(products){
     }
 
     try {
-        const response = await fetch(`${API_URL}/${product.id}`, {
+        const workspaceId = await getWorkspaceId();
+        const response = await fetch(`${API_URL}/${product.id}?workspaceId=${workspaceId}`, {
             method: "DELETE"
         });
 
@@ -151,9 +163,6 @@ function displayProducts(products){
             console.error("Error deleting product:", error);
         }
     });
-
-  
-
         row.appendChild(nameCell);
         row.appendChild(priceCell);
         row.appendChild(actionCell);
@@ -162,7 +171,7 @@ function displayProducts(products){
     });
 }
 
- 
+
 //FOR FILTERING PRODUCTS BY CATEGORY
 const filterButtons = document.getElementById("filter-button");
 const filterOptions = document.getElementById("filterOptions");

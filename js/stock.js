@@ -22,7 +22,8 @@ const clearPurchasePlan = document.getElementById("clearPurchasePlan");
 
 async function fetchStockProducts(){
     try{
-        const response = await fetch(PRODUCTS_API_URL);
+        const workspaceId = await getWorkspaceId();
+        const response = await fetch(`${PRODUCTS_API_URL}?workspaceId=${workspaceId}`);
 
         if(!response.ok){
             throw new Error("Failed to retrieve products");
